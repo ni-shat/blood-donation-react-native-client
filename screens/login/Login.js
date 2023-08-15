@@ -8,13 +8,13 @@ const Login = ({navigation}) => {
     const { control, handleSubmit } = useForm();
 
     return (
-        <View style={tw`bg-white flex-1 px-5`} >
+        <View style={tw`bg-white flex-1 px-5 flex justify-center items-center`} >
 
-            <View style={tw`py-10`}>
+            <View style={tw`py-10 w-full`}>
                 <View style={tw` `}>
-                    <View style={tw`mx-auto mt-4 mb-4`} >
-                        <Image style={tw`w-20 h-20`} source={require('../../assets/e-b.png')} />
-                    </View>
+                    <Pressable  onPress={() => navigation.navigate('Home')}  style={tw`mx-auto mt-4 mb-4`} >
+                        <Image style={tw`w-20 h-20`} source={require('../../assets/logo-blue-black.png')} />
+                    </Pressable>
                     <View>
                         <Text style={tw`text-xl font-bold text-center`}>Log In Now</Text>
                         <Text style={tw`text-base font-normal my-1 text-center text-gray-500`}>Please login to continue using our app</Text>
@@ -45,8 +45,8 @@ const Login = ({navigation}) => {
                         />
                     </View>
                     <View>
-                        <Pressable style={tw`bg-green-700 rounded-md mt-5`} >
-                            <Text style={tw`text-white text-center py-4 font-bold`} >Sign Up</Text>
+                        <Pressable style={tw`bg-blue-600  rounded-md mt-5`} >
+                            <Text style={tw`text-white text-center py-4 font-bold`} >Login</Text>
                         </Pressable>
                     </View>
                     <View>
@@ -54,7 +54,7 @@ const Login = ({navigation}) => {
                             onPress={() => navigation.navigate('Sign-up')}
                             style={tw`font-normal mt-5 text-center text-base text-gray-400`} >Don't have an account?
                             <Text
-                                style={tw`text-green-700 font-semibold`}
+                                style={tw`text-blue-600  font-semibold`}
                             > Sign up</Text>
                         </Text>
                     </View>
@@ -67,7 +67,7 @@ const Login = ({navigation}) => {
                             <View style={tw`border-t mt-1 w-20 border-gray-400`}></View>
                         </View>
                         <View
-                            style={tw`rounded-full border border-[#31974e] p-0 w-full h-12 mx-auto mt-4 flex justify-center flex-row gap-1 items-center px-4`}
+                            style={tw`rounded-full border border-gray-400 p-0 w-full h-12 mx-auto mt-4 flex justify-center flex-row gap-1 items-center px-4`}
                         >
                             <Image
                                 style={tw`border rounded-full w-8 h-8`}

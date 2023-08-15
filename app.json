@@ -4,11 +4,11 @@
     "slug": "project-tutor",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo-black.png",
+    "icon": "./assets/blood-logo.png",
     "backgroundColor": "#1e085a",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/logo-black.png",
+      "image": "./assets/blood-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -20,7 +20,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logo-black.png",
+        "foregroundImage": "./assets/blood-logo.png",
         "backgroundColor": "#ffffff"
       }
     },

@@ -133,12 +133,12 @@ const Signup = ({ navigation }) => {
 
 
     return (
-        <View style={tw`bg-white flex flex-1 px-5`} >
+        <View style={tw`bg-white flex-1 px-5 flex justify-center items-center`} >
 
-            <View style={tw` pb-6`}>
-                <View style={tw`mx-auto mt-2 mb-3`} >
-                    <Image style={tw`w-20 h-20`} source={require('../../assets/e-b.png')} />
-                </View>
+            <View style={tw` pb-6 w-full`}>
+                <Pressable  onPress={() => navigation.navigate('Home')} style={tw`mx-auto mt-[70px] mb-3`} >
+                    <Image style={tw`w-20 h-20`} source={require('../../assets/logo-blue-black.png')} />
+                </Pressable>
                 <View>
                     <Text style={tw`text-xl font-bold text-center`}>Sign Up Now</Text>
                     {/* <Text style={tw`text-sm font-normal my-1 text-center text-gray-500`}>Please fill the details and create account</Text> */}
@@ -146,8 +146,8 @@ const Signup = ({ navigation }) => {
             </View>
 
             {/* form */}
-            <ScrollView>
-                <View style={tw`mt-0`}>
+            <ScrollView style={tw`w-full`}>
+                <View style={tw`mt-0 `}>
                     <View>
                         <Controller
                             control={control}
@@ -290,7 +290,7 @@ const Signup = ({ navigation }) => {
                         signupError && <Text style={tw`text-red-600 `}>{signupError}</Text>
                     }
                     <View>
-                        <Pressable style={tw`bg-green-700 rounded-md mt-1.5`} onPress={handleSubmit(onSubmit)} >
+                        <Pressable style={tw`bg-blue-600 rounded-md mt-1.5`} onPress={handleSubmit(onSubmit)} >
                             <Text style={tw`text-white text-center py-4 font-bold`} >
                                 {
                                     signupLoading ? <Text style={tw``}>Signing up..</Text> : "Sign Up"
@@ -303,7 +303,7 @@ const Signup = ({ navigation }) => {
                         onPress={() => navigation.navigate('login')}
                         style={tw`font-normal mt-5 text-center text-base text-gray-500`} >Already have an account?
                         <Text
-                            style={tw`text-green-700 font-semibold`}
+                            style={tw`text-blue-600 font-semibold`}
 
                         > Login</Text>
                     </Text>
@@ -318,7 +318,7 @@ const Signup = ({ navigation }) => {
                             <View style={tw`border-t mt-1 w-20 border-gray-400`}></View>
                         </View>
                         <View
-                            style={tw`rounded-full border border-[#31974e] p-0 w-full h-12 mx-auto mt-3 flex justify-center flex-row gap-1 items-center px-4`}
+                            style={tw`rounded-full border border-gray-400 p-0 w-full h-12 mx-auto mt-3 flex justify-center flex-row gap-1 items-center px-4`}
                         >
                             <Image
                                 style={tw`border rounded-full w-8 h-8`}

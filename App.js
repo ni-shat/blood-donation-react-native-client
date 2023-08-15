@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import * as React from 'react';
+// import * as React from 'react';
 
 import tw from 'twrnc';
 
@@ -13,13 +13,41 @@ import DetailsScreen from './components/DetailsScreen';
 import Signup from './screens/signup/Signup';
 import Login from './screens/login/Login';
 import AuthProvider from './providers/AuthProvider';
-
+import OnboardingStarter from './screens/onboarding-starter/OnboardingStarter';
+import GetStarted from './screens/get-started/GetStarted';
+import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import BottomTabNav from './navigation/BottomTabNav';
 
 
 const Stack = createNativeStackNavigator();
 
 
 export default function App() {
+
+  const [isFirstLaunched, setIsFirstLaunched] = useState(null);
+
+  useEffect(() => {
+    async function checkFirstLaunch() {
+      try {
+        const value = await AsyncStorage.getItem('isFirstLaunched');
+        if (value === null) {
+          // App is launched for the first time
+          setIsFirstLaunched(true);
+          await AsyncStorage.setItem('isFirstLaunched', 'false');
+        } else {
+          // App is not launched for the first time
+          setIsFirstLaunched(false);
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    checkFirstLaunch();
+  }, [])
+
+
   return (
     // <NavigationContainer>
     //   <Stack.Navigator>
@@ -32,17 +60,21 @@ export default function App() {
       <AuthProvider>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="Home"
+            // initialRouteName={isFirstLaunched ? 'onboarding-starter' : 'Home'}
+            initialRouteName={'onboarding-starter'}
           >
-            <Stack.Screen name="Home" component={Homescreen} />
-            <Stack.Screen name="Sign-up" component={Signup}  />
-            <Stack.Screen name="login" component={Login} />
+            <Stack.Screen name="Home" component={Homescreen} options={{ headerShown: false }} />
+            <Stack.Screen name="onboarding-starter" component={OnboardingStarter} options={{ headerShown: false }} />
+            <Stack.Screen name="get-started" component={GetStarted} options={{ headerShown: false }} />
+            <Stack.Screen name="Sign-up" component={Signup} options={{ headerShown: false }} />
+            <Stack.Screen name="login" component={Login} options={{ headerShown: false }} />
+            <Stack.Screen name="bottom-tab-nav" component={BottomTabNav} options={{ headerShown: false }} />
           </Stack.Navigator>
         </NavigationContainer>
       </AuthProvider>
     </>
-
   );
+
 }
 
 const styles = StyleSheet.create({
