@@ -1,34 +1,50 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Button, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import tw from 'twrnc';
 import { Controller, useForm } from "react-hook-form";
 import { AuthContext } from '../../providers/AuthProvider';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 
 const Signup = ({ navigation }) => {
 
     const [signupLoading, setSignupLoading] = useState(false);
     const [signupError, setSignupError] = useState("");
-    const [selectedGender, setSelectedGender] = useState("");
+    const [selectedBloodType, setselectedBloodType] = useState("");
+    const [isSignupClicked, setIsSignupClicked] = useState(false);
+    const [dateOfBirth, setDateOfBirth] = useState(new Date()); //date picker
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [isDatePickerClicked, setIsDatePickerClicked] = useState(false);
+
+
     const pickerRef = useRef();
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
     const [image, setImage] = useState(null);
     const { user, loading, createUser, updateUserProfile } = useContext(AuthContext);
     // console.log("Hey nishat", user, loading)
-    const { control, handleSubmit, formState: { errors }, watch, reset } = useForm();
+    const { control, handleSubmit, formState: { errors }, watch, reset, clearErrors, setValue } = useForm();
     const password = watch('password');
     const confirmPassword = watch('confirmPassword');
 
+    // useEffect(() => {
+    //     console.log("im in useeffect!");
+
+    //     fetch('http://192.168.0.105:5000/check')
+    //         .then(response => response.json())
+    //         .then(data => console.log(data))
+    //         .catch(error => console.error('Error fetching data:', error));
+    // }, [])
+
+    // Listen for navigation events
     useEffect(() => {
-        console.log("im in useeffect!");
-         
-        fetch('http://192.168.0.105:5000/check')
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.error('Error fetching data:', error));
-    }, [])
+        const unsubscribe = navigation.addListener('blur', () => {
+            setIsDatePickerClicked(false);
+        });
+
+        return unsubscribe;
+    }, [navigation]);
 
     const pickImage = async () => {
 
@@ -57,12 +73,28 @@ const Signup = ({ navigation }) => {
         pickerRef.current.focus();
     }
 
+    const handleBloodTypeChange = (itemValue) => {
+        setselectedBloodType(itemValue)
+        setValue('bloodType', itemValue); // Update the form value
+        if (itemValue && errors.bloodType) {
+            clearErrors('bloodType'); // Clear the "required" error
+        }
+        // close(); // Close the picker
+    };
+
+    const handleDatePicker = (event, selectedDate) => {
+        const currentDate = selectedDate;
+        setShowDatePicker(Platform.OS === 'ios'); // Close the date picker on iOS
+        setDateOfBirth(currentDate);
+        setIsDatePickerClicked(true);
+    };
 
     const onSubmit = data => {
         console.log("pressed submit")
         data.userImage = image;
-        data.role = "student";
-        data.gender = selectedGender;
+        data.role = "donor";
+        data.bloodType = selectedBloodType;
+        data.birthDate = dateOfBirth.toDateString();
         delete data.confirmPassword;
         console.log(data);
         setSignupLoading(true);
@@ -82,10 +114,12 @@ const Signup = ({ navigation }) => {
                         const saveUser = {
                             name: data.name,
                             email: data.email,
-                            userImage: data.userImage,
-                            role: data.role || "",
-                            phone: data.phone || "",
-                            gender: data.gender || ""
+                            bloodType: data.bloodType,
+                            birthDate: data.birthDate || "",
+                            userImage: data.userImage || "",
+                            role: data.role,
+                            phone: data.phone,
+                            area: data.area || ""
                         }
                         // after updating post data into DB
                         fetch(`http://192.168.0.105:5000/users?email=${data.email}`, {
@@ -107,9 +141,10 @@ const Signup = ({ navigation }) => {
                                     //     timer: 1500
                                     // });
                                     alert('You successfully registered!')
-                                    setSelectedGender("");
+                                    setselectedBloodType("");
                                     setImage(null);
-                                    navigation.navigate('Home')
+                                    navigation.navigate('bottom-tab-nav')
+                                    // FIX : navigate to profile if some
                                 }
                             })
                         // end posting data into DB
@@ -136,8 +171,8 @@ const Signup = ({ navigation }) => {
         <View style={tw`bg-white flex-1 px-5 flex justify-center items-center`} >
 
             <View style={tw` pb-6 w-full`}>
-                <Pressable  onPress={() => navigation.navigate('Home')} style={tw`mx-auto mt-[70px] mb-3`} >
-                    <Image style={tw`w-20 h-20`} source={require('../../assets/logo-blue-black.png')} />
+                <Pressable onPress={() => navigation.navigate('Home')} style={tw`mx-auto mt-14 mb-3`} >
+                    <Image style={tw`w-20 h-20`} source={require('../../assets/blood-logo.png')} />
                 </Pressable>
                 <View>
                     <Text style={tw`text-xl font-bold text-center`}>Sign Up Now</Text>
@@ -186,6 +221,81 @@ const Signup = ({ navigation }) => {
                         />
                         {errors.email && <Text style={tw`text-red-600 text-xs`} >required</Text>}
                     </View>
+                    <View>
+                        <Controller
+                            control={control}
+                            rules={{
+                                required: true,
+                            }}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <Pressable
+                                    onPress={open}
+                                    style={tw`text-base font-medium my-1.5 h-12 px-3.5 border border-gray-300 rounded-md text-gray-900`}
+                                >
+                                    <Picker
+                                        ref={pickerRef}
+                                        style={tw`-mt-1 -ml-4`}
+                                        selectedValue={selectedBloodType && selectedBloodType}
+                                        onValueChange={
+                                            (itemValue) => handleBloodTypeChange(itemValue)
+                                        }
+                                        onBlur={onBlur} // Trigger onBlur event
+                                    >
+                                        <Picker.Item
+                                            style={tw`h-0 text-[#a5a5a5] font-medium`}
+                                            onPress={open}
+                                            label="Blood type.. *" value="Gender" />
+                                        <Picker.Item style={tw`-mt-6 text-gray-900`} label="A+" value="A+" />
+                                        <Picker.Item style={tw`-mt-6 text-gray-900`} label="B+" value="B+" />
+                                        <Picker.Item style={tw`-mt-6 text-gray-900`} label="AB+" value="AB+" />
+                                        <Picker.Item style={tw` text-gray-900`} label="O+" value="O+" />
+                                        <Picker.Item style={tw`-mt-6 text-gray-900`} label="A-" value="A-" />
+                                        <Picker.Item style={tw`-mt-6 text-gray-900`} label="B-" value="B-" />
+                                        <Picker.Item style={tw`-mt-6 text-gray-900`} label="AB-" value="AB-" />
+                                        <Picker.Item style={tw` text-gray-900`} label="O-" value="O-" />
+                                    </Picker>
+                                </Pressable>
+                            )}
+                            name="bloodType"
+                        />
+                        {errors.bloodType && (
+                            <Text style={tw`text-red-600 text-xs`}>required</Text>
+                        )}
+                    </View>
+                    <View>
+                        <Controller
+                            control={control}
+                            rules={{
+                                required: true,
+                            }}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <TextInput
+                                    style={tw`text-base font-medium my-1.5 px-3.5 py-2.5 border border-gray-300 rounded-md text-gray-900`}
+                                    placeholder="Phone *"
+                                    onBlur={onBlur}
+                                    onChangeText={onChange}
+                                    value={value}
+                                />
+                            )}
+                            name="phone"
+                        />
+                        {errors.phone && <Text style={tw`text-red-600 text-xs`} >required</Text>}
+                    </View>
+                    <View>
+                        <Controller
+                            control={control}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <TextInput
+                                    style={tw`text-base font-medium my-1.5 px-3.5 py-2.5 border border-gray-300 rounded-md text-gray-900`}
+                                    placeholder="Area "
+                                    onBlur={onBlur}
+                                    onChangeText={onChange}
+                                    value={value}
+                                />
+                            )}
+                            name="area"
+                        />
+                    </View>
 
                     {/* MASUMA */}
                     <Text onPress={pickImage} style={tw`my-1.5 px-[13.2px] py-2.5 border border-gray-300 rounded-md`}
@@ -195,54 +305,33 @@ const Signup = ({ navigation }) => {
                                 <Text
                                     style={tw`text-base font-medium text-gray-900`}
 
-                                >{getImageNameFromURI(image)}</Text> : <Text style={tw`text-base font-medium text-[#a5a5a5]`}
-                                >Choose an image..</Text>
+                                >{getImageNameFromURI(image)}</Text> :
+                                <Text style={tw`text-base font-medium text-[#a5a5a5]`}>Choose an image..</Text>
                         }
                     </Text>
                     {/* {image && <Image source={{ uri: image }} style={{ width: 100, height: 100 }} />} */}
 
-                    <Pressable onPress={open}
-                        style={tw`text-base font-medium my-1.5 h-12 px-3.5 border border-gray-300 rounded-md text-gray-900`}
-                    >
-                        <Picker
-                            ref={pickerRef}
-                            style={tw`-mt-1 -ml-4`}
-                            selectedValue={selectedGender ? selectedGender : "Gender"}
-                            onValueChange={(itemValue, itemIndex) =>
-                                setSelectedGender(itemValue)
-                            }>
-                            <Picker.Item
-                                style={tw`h-0 text-[#a5a5a5] font-semibold`}
-                                // enabled={false}
-                                onPress={open}
-                                label="Choose gender.." value="Gender" />
-                            <Picker.Item style={tw`-mt-6 text-gray-900`} label="Male" value="Male" />
-                            <Picker.Item style={tw` text-gray-900`} label="Female" value="Female" />
-                        </Picker>
-                    </Pressable>
-
-
-
-                    {/* <View>
-                        <Controller
-                            control={control}
-                            rules={{
-                                required: true,
-                            }}
-                            render={({ field: { onChange, onBlur, value } }) => (
-                                <Text onPress={openGallery}
-                                    style={tw`text-base font-medium my-1.5 px-[13.2px] py-2.5 border border-gray-300 rounded-md text-[#a5a5a5]`}
-                                    placeholder="Photo *"
-                                    onBlur={onBlur}
-                                    onChangeText={onChange}
-                                    value={value}>
-                                    Choose a photo
-                                </Text>
+                    <View>
+                        <Pressable onPress={() => setShowDatePicker(true)}
+                            style={tw`text-base flex justify-center font-medium my-1.5 h-12 px-3.5 border border-gray-300 rounded-md `}
+                        >
+                            {
+                                isDatePickerClicked ?
+                                    <Text style={tw` text-gray-900`}>{dateOfBirth.toDateString()}</Text>
+                                    :
+                                    <Text style={tw`text-[#a5a5a5] font-medium text-[15px]`}>Date of birth</Text>
+                            }
+                            {showDatePicker && (
+                                <DateTimePicker
+                                    value={dateOfBirth}
+                                    mode="date"
+                                    display="default"
+                                    onChange={handleDatePicker}
+                                />
                             )}
-                            name="photo"
-                        />
-                        {errors.photo && <Text style={tw`text-red-600 text-xs`} >required</Text>}
-                    </View> */}
+                        </Pressable>
+                    </View>
+
                     <View>
                         <Controller
                             control={control}
@@ -289,28 +378,32 @@ const Signup = ({ navigation }) => {
                     {
                         signupError && <Text style={tw`text-red-600 `}>{signupError}</Text>
                     }
-                    <View>
-                        <Pressable style={tw`bg-blue-600 rounded-md mt-1.5`} onPress={handleSubmit(onSubmit)} >
+                    <Pressable
+                    // onPress={handleSignupClick}
+                    >
+                        <TouchableOpacity style={tw`bg-red-700 rounded-md mt-1.5`}
+                            onPress={handleSubmit(onSubmit)}
+                        >
                             <Text style={tw`text-white text-center py-4 font-bold`} >
                                 {
                                     signupLoading ? <Text style={tw``}>Signing up..</Text> : "Sign Up"
                                 }
                                 {/* Sign Up */}
                             </Text>
-                        </Pressable>
-                    </View>
+                        </TouchableOpacity>
+                    </Pressable>
                     <Text
                         onPress={() => navigation.navigate('login')}
                         style={tw`font-normal mt-5 text-center text-base text-gray-500`} >Already have an account?
                         <Text
-                            style={tw`text-blue-600 font-semibold`}
+                            style={tw`text-red-700 font-semibold`}
 
                         > Login</Text>
                     </Text>
 
                 </View>
 
-                <View style={tw` pt-2 px-2`}>
+                {/* <View style={tw` pt-2 px-2`}>
                     <View>
                         <View style={tw`flex flex-row justify-center items-center gap-2 pt-1.5 `}>
                             <View style={tw`border-t mt-1 w-20 border-gray-400`}></View>
@@ -327,7 +420,8 @@ const Signup = ({ navigation }) => {
                             <Text style={tw`text-base font-semibold text-gray-700`}> connect with google</Text>
                         </View>
                     </View>
-                </View>
+                </View> */}
+
             </ScrollView>
         </View>
     );
@@ -342,3 +436,27 @@ const styles = StyleSheet.create({
 });
 
 export default Signup;
+
+
+
+
+{/* <View>
+                        <Controller
+                            control={control}
+                            rules={{
+                                required: true,
+                            }}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <Text onPress={openGallery}
+                                    style={tw`text-base font-medium my-1.5 px-[13.2px] py-2.5 border border-gray-300 rounded-md text-[#a5a5a5]`}
+                                    placeholder="Photo *"
+                                    onBlur={onBlur}
+                                    onChangeText={onChange}
+                                    value={value}>
+                                    Choose a photo
+                                </Text>
+                            )}
+                            name="photo"
+                        />
+                        {errors.photo && <Text style={tw`text-red-600 text-xs`} >required</Text>}
+                    </View> */}

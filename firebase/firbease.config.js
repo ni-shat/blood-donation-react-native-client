@@ -6,12 +6,12 @@ import 'firebase/auth';
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDIU6xhviK_mm05hOy1ZGdYoRpBOIVrkxk",
-  authDomain: "tutor-finding-auth.firebaseapp.com",
-  projectId: "tutor-finding-auth",
-  storageBucket: "tutor-finding-auth.appspot.com",
-  messagingSenderId: "999774288892",
-  appId: "1:999774288892:web:875b463127b3ed67bf5079"
+  apiKey: "AIzaSyDG_XwR5ca2ztiVB3NYTL6BbaTZDN80YNE",
+  authDomain: "blood-donation-auth.firebaseapp.com",
+  projectId: "blood-donation-auth",
+  storageBucket: "blood-donation-auth.appspot.com",
+  messagingSenderId: "279780151710",
+  appId: "1:279780151710:web:228f70f14f6348d5f8068f"
 };
 
 // Initialize Firebase
