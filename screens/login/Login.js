@@ -1,8 +1,9 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, Image, Pressable, StatusBar, Text, TextInput, View } from 'react-native';
 import tw from 'twrnc';
 import { useForm } from "react-hook-form";
 import { AuthContext } from '../../providers/AuthProvider';
+import { useRoute } from '@react-navigation/native';
 
 const Login = ({ navigation }) => {
 
@@ -10,6 +11,22 @@ const Login = ({ navigation }) => {
     const { user, loading, signIn } = useContext(AuthContext);
     const [loginLoading, setLoginLoading] = useState(false);
     const [loginError, setLoginError] = useState("");
+    const [userRoleProp, setUserRoleProp] = useState("");
+
+    // if (route.params) {
+    //     console.log("route.params", route.params)
+    //     const { userRole } = route.params;
+    // }
+    const route = useRoute();
+    console.log(route)
+
+    useEffect(() => {
+        if (route.params) {
+            const { userRole } = route.params;
+            setUserRoleProp(userRole || '');
+        }
+    }, [route.params])
+
 
     const onSubmit = data => {
 
@@ -42,12 +59,12 @@ const Login = ({ navigation }) => {
     return (
         //
         <>
-         <StatusBar style='dark' />
+            <StatusBar style='dark' />
             <View style={tw`bg-white flex-1 px-5 flex pt-28`} >
 
                 <View style={tw`py-10 w-full`}>
                     <View style={tw` `}>
-                        <Pressable onPress={() => navigation.navigate('Home')} style={tw`mx-auto mt-4 mb-4`} >
+                        <Pressable onPress={() => navigation.navigate('bottom-tab-nav')} style={tw`mx-auto mt-4 mb-4`} >
                             <Image style={tw`w-24 h-24`} source={require('../../assets/blood-logo.png')} />
                         </Pressable>
                         <View>
@@ -89,7 +106,12 @@ const Login = ({ navigation }) => {
                         </View>
                         <View>
                             <Text
-                                onPress={() => navigation.navigate('Sign-up')}
+                                onPress={
+                                    // () => navigation.navigate('Sign-up')
+                                    () => navigation.navigate('Sign-up', {
+                                        userRole: userRoleProp,
+                                    })
+                                }
                                 style={tw`font-normal mt-5 text-center text-base text-gray-400`} >Don't have an account?
                                 <Text
                                     style={tw`text-red-700  font-semibold`}

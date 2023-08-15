@@ -1,16 +1,37 @@
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, Button, Image, ImageBackground, Pressable, StatusBar } from 'react-native';
 import tw from 'twrnc';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AuthContext } from '../providers/AuthProvider';
 
 
 
 function Homescreen({ navigation }) {
 
+  const { user } = useContext(AuthContext);
+
   const handleFindDonors = () => {
     navigation.navigate('search-donors');
+  }
+  const handleBecomeDonor = () => {
+    if (!user) {
+      navigation.navigate('login', {
+        userRole: 'Donor',
+      });
+    } else {
+      navigation.navigate('Profile');
+    }
+  }
+  const handleEmergencyRequest = () => {
+    if (!user) {
+      navigation.navigate('login', {
+        userRole: 'Patient',
+      });
+    } else {
+      navigation.navigate('emergency-request');
+    }
   }
 
   return (
@@ -29,13 +50,13 @@ function Homescreen({ navigation }) {
             <Image style={tw`w-11 h-11 mx-auto rounded-xl `} source={require('../assets/find-.png')} />
             <Text style={tw`text-[15px] mt-1 font-medium leading-7 uppercase text-white`}>Find Donors</Text>
           </Pressable>
-          <Pressable onPress={handleFindDonors} style={tw`border border-gray-200 w-[47%] h-32 flex justify-center items-center rounded-xl px-2 pb-8 pt-5 mb-5 bg-white shadow-2xl shadow-black`}>
+          <Pressable onPress={handleBecomeDonor} style={tw`border border-gray-200 w-[47%] h-32 flex justify-center items-center rounded-xl px-2 pb-8 pt-5 mb-5 bg-white shadow-2xl shadow-black`}>
             <Image style={tw`w-10 h-10 mx-auto rounded-xl `} source={require('../assets/become.png')} />
             <Text style={tw`text-[15px] mt-1 font-medium leading-7 uppercase text-gray-800`}>Become a Donor</Text>
           </Pressable>
         </View>
         <View style={tw`flex flex-row gap-4 justify-between shadow-2xl shadow-black`}>
-          <Pressable onPress={handleFindDonors} style={tw`border border-gray-200 w-[47%] h-32 flex justify-center items-center rounded-xl px-2 pb-8 pt-5 mb-5 bg-white shadow-2xl shadow-black`}>
+          <Pressable onPress={handleEmergencyRequest} style={tw`border border-gray-200 w-[47%] h-32 flex justify-center items-center rounded-xl px-2 pb-8 pt-5 mb-5 bg-white shadow-2xl shadow-black`}>
             <Image style={tw`w-11 h-11 mx-auto rounded-xl `} source={require('../assets/emergency.png')} />
             <Text style={tw`text-[15px] mt-1 font-medium leading-7 uppercase text-gray-800`}>Emergency Requests</Text>
           </Pressable>

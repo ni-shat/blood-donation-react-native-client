@@ -18,6 +18,7 @@ import GetStarted from './screens/get-started/GetStarted';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BottomTabNav from './navigation/BottomTabNav';
+import EmergencyRequest from './screens/emergency-request/EmergencyRequest';
 
 
 const Stack = createNativeStackNavigator();
@@ -69,6 +70,7 @@ export default function App() {
             <Stack.Screen name="get-started" component={GetStarted} options={{ headerShown: false }} />
             <Stack.Screen name="Sign-up" component={Signup} options={{ headerShown: false }} />
             <Stack.Screen name="login" component={Login} options={{ headerShown: false }} />
+            <Stack.Screen name="emergency-request" component={EmergencyRequest} options={{ headerShown: false }} />
             <Stack.Screen name="bottom-tab-nav" component={BottomTabNav} options={{ headerShown: false }} />
           </Stack.Navigator>
         </NavigationContainer>

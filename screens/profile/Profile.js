@@ -24,10 +24,10 @@ const Profile = () => {
     const handleLogout = () => {
         console.log("logout")
         logOut()
-        .then(res => {
-            navigation.replace('bottom-tab-nav');
-        })
-        .catch(err => console.log(err))
+            .then(res => {
+                navigation.replace('bottom-tab-nav');
+            })
+            .catch(err => console.log(err))
     }
 
     if (loading) {
@@ -36,6 +36,10 @@ const Profile = () => {
 
     else if (!user) {
         return navigation.push('login')
+
+        // return navigation.navigate('login', {
+        //     userRole: 'patient',
+        // });
     }
 
     // style={tw``}

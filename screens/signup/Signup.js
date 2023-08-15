@@ -8,11 +8,12 @@ import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 
-const Signup = ({ navigation }) => {
+const Signup = ({ navigation, route }) => {
 
     const [signupLoading, setSignupLoading] = useState(false);
     const [signupError, setSignupError] = useState("");
     const [selectedBloodType, setselectedBloodType] = useState("");
+    const [selectedRole, setSelectedRole] = useState("");
     const [isSignupClicked, setIsSignupClicked] = useState(false);
     const [dateOfBirth, setDateOfBirth] = useState(new Date()); //date picker
     const [showDatePicker, setShowDatePicker] = useState(false);
@@ -27,6 +28,14 @@ const Signup = ({ navigation }) => {
     const { control, handleSubmit, formState: { errors }, watch, reset, clearErrors, setValue } = useForm();
     const password = watch('password');
     const confirmPassword = watch('confirmPassword');
+
+    useEffect(() => {
+        if (route.params) {
+            const { userRole } = route.params;
+            setSelectedRole(userRole || '');
+        }
+    }, [route.params])
+
 
     // useEffect(() => {
     //     console.log("im in useeffect!");
@@ -69,9 +78,9 @@ const Signup = ({ navigation }) => {
         return parts[parts.length - 1];
     };
 
-    function open() {
-        pickerRef.current.focus();
-    }
+    // function open() {
+    //     pickerRef.current.focus();
+    // }
 
     const handleBloodTypeChange = (itemValue) => {
         setselectedBloodType(itemValue)
@@ -79,7 +88,13 @@ const Signup = ({ navigation }) => {
         if (itemValue && errors.bloodType) {
             clearErrors('bloodType'); // Clear the "required" error
         }
-        // close(); // Close the picker
+    };
+    const handleRoleChange = (itemValue) => {
+        setSelectedRole(itemValue)
+        setValue('role', itemValue); // Update the form value
+        if (itemValue && errors.role) {
+            clearErrors('role'); // Clear the "required" error
+        }
     };
 
     const handleDatePicker = (event, selectedDate) => {
@@ -92,7 +107,7 @@ const Signup = ({ navigation }) => {
     const onSubmit = data => {
         console.log("pressed submit")
         data.userImage = image;
-        data.role = "donor";
+        // data.role = "donor";
         data.bloodType = selectedBloodType;
         data.birthDate = dateOfBirth.toDateString();
         delete data.confirmPassword;
@@ -114,7 +129,7 @@ const Signup = ({ navigation }) => {
                         const saveUser = {
                             name: data.name,
                             email: data.email,
-                            bloodType: data.bloodType,
+                            bloodType: data.bloodType || "",
                             birthDate: data.birthDate || "",
                             userImage: data.userImage || "",
                             role: data.role,
@@ -147,7 +162,7 @@ const Signup = ({ navigation }) => {
                                     // FIX : navigate to profile if some
                                 }
                             })
-                        // end posting data into DB
+                            
                     })
 
                 reset();
@@ -171,7 +186,7 @@ const Signup = ({ navigation }) => {
         <View style={tw`bg-white flex-1 px-5 flex justify-center items-center`} >
 
             <View style={tw` pb-6 w-full`}>
-                <Pressable onPress={() => navigation.navigate('Home')} style={tw`mx-auto mt-14 mb-3`} >
+                <Pressable onPress={() => navigation.navigate('bottom-tab-nav')} style={tw`mx-auto mt-14 mb-3`} >
                     <Image style={tw`w-20 h-20`} source={require('../../assets/blood-logo.png')} />
                 </Pressable>
                 <View>
@@ -182,7 +197,7 @@ const Signup = ({ navigation }) => {
 
             {/* form */}
             <ScrollView style={tw`w-full`}>
-                <View style={tw`mt-0 `}>
+                <View style={tw`mt-0 pb-11`}>
                     <View>
                         <Controller
                             control={control}
@@ -209,6 +224,43 @@ const Signup = ({ navigation }) => {
                                 required: true,
                             }}
                             render={({ field: { onChange, onBlur, value } }) => (
+                                <Pressable
+                                    // onPress={open}
+                                    style={tw`text-base font-medium my-1.5 h-12 px-3.5 border border-gray-300 rounded-md text-gray-900`}
+                                >
+                                    <Picker
+                                        ref={pickerRef}
+                                        style={tw`-mt-1 -ml-4`}
+                                        selectedValue={selectedRole && selectedRole}
+                                        // userRoleProp
+                                        onValueChange={
+                                            (itemValue) => handleRoleChange(itemValue)
+                                        }
+                                        onBlur={onBlur} // Trigger onBlur event
+                                    >
+
+                                        <Picker.Item
+                                            style={tw`h-0 text-[#a5a5a5] font-medium`}
+                                            // onPress={open}
+                                            label={"Role.. *"} value="Role" />
+                                        <Picker.Item style={tw`-mt-6 text-gray-900`} label="Patient" value="Patient" />
+                                        <Picker.Item style={tw`-mt-6 text-gray-900`} label="Donor" value="Donor" />
+                                    </Picker>
+                                </Pressable>
+                            )}
+                            name="role"
+                        />
+                        {errors.role && (
+                            <Text style={tw`text-red-600 text-xs`}>required</Text>
+                        )}
+                    </View>
+                    <View>
+                        <Controller
+                            control={control}
+                            rules={{
+                                required: true,
+                            }}
+                            render={({ field: { onChange, onBlur, value } }) => (
                                 <TextInput
                                     style={tw`text-base font-medium my-1.5 px-3.5 py-2.5 border border-gray-300 rounded-md text-gray-900`}
                                     placeholder="Email *"
@@ -221,47 +273,51 @@ const Signup = ({ navigation }) => {
                         />
                         {errors.email && <Text style={tw`text-red-600 text-xs`} >required</Text>}
                     </View>
-                    <View>
-                        <Controller
-                            control={control}
-                            rules={{
-                                required: true,
-                            }}
-                            render={({ field: { onChange, onBlur, value } }) => (
-                                <Pressable
-                                    onPress={open}
-                                    style={tw`text-base font-medium my-1.5 h-12 px-3.5 border border-gray-300 rounded-md text-gray-900`}
-                                >
-                                    <Picker
-                                        ref={pickerRef}
-                                        style={tw`-mt-1 -ml-4`}
-                                        selectedValue={selectedBloodType && selectedBloodType}
-                                        onValueChange={
-                                            (itemValue) => handleBloodTypeChange(itemValue)
-                                        }
-                                        onBlur={onBlur} // Trigger onBlur event
+                    {
+                        selectedRole === 'Donor' &&
+                        <View>
+                            <Controller
+                                control={control}
+                                rules={{
+                                    required: true,
+                                }}
+                                render={({ field: { onChange, onBlur, value } }) => (
+                                    <Pressable
+                                        // onPress={open}
+                                        style={tw`text-base font-medium my-1.5 h-12 px-3.5 border border-gray-300 rounded-md text-gray-900`}
                                     >
-                                        <Picker.Item
-                                            style={tw`h-0 text-[#a5a5a5] font-medium`}
-                                            onPress={open}
-                                            label="Blood type.. *" value="Gender" />
-                                        <Picker.Item style={tw`-mt-6 text-gray-900`} label="A+" value="A+" />
-                                        <Picker.Item style={tw`-mt-6 text-gray-900`} label="B+" value="B+" />
-                                        <Picker.Item style={tw`-mt-6 text-gray-900`} label="AB+" value="AB+" />
-                                        <Picker.Item style={tw` text-gray-900`} label="O+" value="O+" />
-                                        <Picker.Item style={tw`-mt-6 text-gray-900`} label="A-" value="A-" />
-                                        <Picker.Item style={tw`-mt-6 text-gray-900`} label="B-" value="B-" />
-                                        <Picker.Item style={tw`-mt-6 text-gray-900`} label="AB-" value="AB-" />
-                                        <Picker.Item style={tw` text-gray-900`} label="O-" value="O-" />
-                                    </Picker>
-                                </Pressable>
+                                        <Picker
+                                            ref={pickerRef}
+                                            style={tw`-mt-1 -ml-4`}
+                                            selectedValue={selectedBloodType && selectedBloodType}
+                                            onValueChange={
+                                                (itemValue) => handleBloodTypeChange(itemValue)
+                                            }
+                                            onBlur={onBlur} // Trigger onBlur event
+                                        >
+                                            <Picker.Item
+                                                style={tw`h-0 text-[#a5a5a5] font-medium`}
+                                                // onPress={open}
+                                                label="Blood type.. *" value="Gender" />
+                                            <Picker.Item style={tw`-mt-6 text-gray-900`} label="A+" value="A+" />
+                                            <Picker.Item style={tw`-mt-6 text-gray-900`} label="B+" value="B+" />
+                                            <Picker.Item style={tw`-mt-6 text-gray-900`} label="AB+" value="AB+" />
+                                            <Picker.Item style={tw` text-gray-900`} label="O+" value="O+" />
+                                            <Picker.Item style={tw`-mt-6 text-gray-900`} label="A-" value="A-" />
+                                            <Picker.Item style={tw`-mt-6 text-gray-900`} label="B-" value="B-" />
+                                            <Picker.Item style={tw`-mt-6 text-gray-900`} label="AB-" value="AB-" />
+                                            <Picker.Item style={tw` text-gray-900`} label="O-" value="O-" />
+                                        </Picker>
+                                    </Pressable>
+                                )}
+                                name="bloodType"
+                            />
+                            {errors.bloodType && (
+                                <Text style={tw`text-red-600 text-xs`}>required</Text>
                             )}
-                            name="bloodType"
-                        />
-                        {errors.bloodType && (
-                            <Text style={tw`text-red-600 text-xs`}>required</Text>
-                        )}
-                    </View>
+                        </View>
+                    }
+
                     <View>
                         <Controller
                             control={control}
@@ -311,26 +367,29 @@ const Signup = ({ navigation }) => {
                     </Text>
                     {/* {image && <Image source={{ uri: image }} style={{ width: 100, height: 100 }} />} */}
 
-                    <View>
-                        <Pressable onPress={() => setShowDatePicker(true)}
-                            style={tw`text-base flex justify-center font-medium my-1.5 h-12 px-3.5 border border-gray-300 rounded-md `}
-                        >
-                            {
-                                isDatePickerClicked ?
-                                    <Text style={tw` text-gray-900`}>{dateOfBirth.toDateString()}</Text>
-                                    :
-                                    <Text style={tw`text-[#a5a5a5] font-medium text-[15px]`}>Date of birth</Text>
-                            }
-                            {showDatePicker && (
-                                <DateTimePicker
-                                    value={dateOfBirth}
-                                    mode="date"
-                                    display="default"
-                                    onChange={handleDatePicker}
-                                />
-                            )}
-                        </Pressable>
-                    </View>
+                    {
+                        selectedRole === 'Donor' &&
+                        <View>
+                            <Pressable onPress={() => setShowDatePicker(true)}
+                                style={tw`text-base flex justify-center font-medium my-1.5 h-12 px-3.5 border border-gray-300 rounded-md `}
+                            >
+                                {
+                                    isDatePickerClicked ?
+                                        <Text style={tw` text-gray-900`}>{dateOfBirth.toDateString()}</Text>
+                                        :
+                                        <Text style={tw`text-[#a5a5a5] font-medium text-[15px]`}>Date of birth</Text>
+                                }
+                                {showDatePicker && (
+                                    <DateTimePicker
+                                        value={dateOfBirth}
+                                        mode="date"
+                                        display="default"
+                                        onChange={handleDatePicker}
+                                    />
+                                )}
+                            </Pressable>
+                        </View>
+                    }
 
                     <View>
                         <Controller
