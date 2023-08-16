@@ -19,6 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import BottomTabNav from './navigation/BottomTabNav';
 import Testimonials from './screens/testimonials/Testimonials';
 import TopTabNavOfEmergencyRequest from './navigation/TopTabNavOfEmergencyRequest';
+import NavEmergencyInfoDonor from './navigation/NavEmergencyInfoDonor';
 
 
 const Stack = createNativeStackNavigator();
@@ -47,7 +48,7 @@ export default function App() {
 
     checkFirstLaunch();
   }, [])
-  
+
 
 
   return (
@@ -70,8 +71,10 @@ export default function App() {
             <Stack.Screen name="get-started" component={GetStarted} options={{ headerShown: false }} />
             <Stack.Screen name="Sign-up" component={Signup} options={{ headerShown: false }} />
             <Stack.Screen name="login" component={Login} options={{ headerShown: false }} />
-            <Stack.Screen name="emergency-request" component={TopTabNavOfEmergencyRequest} options={{ headerShown: false }} />
             <Stack.Screen name="testimonial" component={Testimonials} options={{ headerShown: false }} />
+
+            <Stack.Screen name="emergency-request" component={TopTabNavOfEmergencyRequest} options={{ headerShown: false }} />
+            <Stack.Screen name="nav-emergeny-info-donor" component={NavEmergencyInfoDonor} options={{ headerShown: false }} />
             <Stack.Screen name="bottom-tab-nav" component={BottomTabNav} options={{ headerShown: false }} />
           </Stack.Navigator>
         </NavigationContainer>

@@ -73,6 +73,13 @@ const Profile = () => {
                                 source={{ uri: user?.photoURL }}
                             />
                         </View>
+                        {/* <View style={tw`absolute right-7 top-[90px]`}>
+                            <Text style={tw`text-base flex items-end justify-end text-sky-200 italic  capitalize font-semibold px-0`}>{loggedUser?.role === 'donor' && loggedUser?.role}</Text>
+                        </View> */}
+                        <View style={tw` mb-2 mt-1`}>
+                            <Text style={tw`text-base flex items-end justify-end text-sky-200 italic  capitalize font-semibold px-0`}>{loggedUser?.role === 'donor' && loggedUser?.role}</Text>
+                        </View>
+
                         <Pressable
                             style={tw` px-0 flex flex-row gap-2 justify-start `}
                             onPress={handleLogout}>
@@ -92,26 +99,26 @@ const Profile = () => {
 
                     {
                         loggedUser?.role?.toLowerCase() === 'donor' ?
-                        <View style={tw`flex flex-col -mt-[110px] py-2 px-7 mb-10 gap-2 w-full items-end justify-end `}>
-                            <View style={tw`border shadow-2xl shadow-black  border-gray-200 w-36 h-10 flex justify-center items-center rounded-xl px-2 bg-white `}>
-                                <Text style={tw`text-[15px] text-center font-medium leading-7 capitalize text-gray-800`}>
-                                    10 request
-                                </Text>
+                            <View style={tw`flex flex-col -mt-[110px] py-2 px-7 mb-10 gap-2 w-full items-end justify-end `}>
+                                <View style={tw`border shadow-2xl shadow-black  border-gray-200 w-36 h-10 flex justify-center items-center rounded-xl px-2 bg-white `}>
+                                    <Text style={tw`text-[15px] text-center font-medium leading-7 capitalize text-gray-800`}>
+                                        10 request
+                                    </Text>
+                                </View>
+                                <View style={tw`border shadow-2xl shadow-black  border-gray-200 w-36 h-10 flex justify-center items-center rounded-xl px-2 bg-red-400 `}>
+                                    <Text style={tw`text-[15px] text-center font-semibold leading-7 capitalize text-white`}>
+                                        20 Life Saved
+                                    </Text>
+                                </View>
                             </View>
-                            <View style={tw`border shadow-2xl shadow-black  border-gray-200 w-36 h-10 flex justify-center items-center rounded-xl px-2 bg-red-400 `}>
-                                <Text style={tw`text-[15px] text-center font-semibold leading-7 capitalize text-white`}>
-                                    20 Life Saved
-                                </Text>
+                            :
+                            <View style={tw`flex flex-col -mt-[110px] py-2 px-7 mb-10 gap-2 w-full items-end justify-end `}>
+                                <View style={tw`border shadow-2xl shadow-black  border-gray-200 w-36 h-10 flex justify-center items-center rounded-xl px-2 bg-white `}>
+                                    <Text style={tw`text-[15px] text-center font-medium leading-7 capitalize text-gray-800`}>
+                                        View profile
+                                    </Text>
+                                </View>
                             </View>
-                        </View>
-                        :
-                        <View style={tw`flex flex-col -mt-[110px] py-2 px-7 mb-10 gap-2 w-full items-end justify-end `}>
-                            <View style={tw`border shadow-2xl shadow-black  border-gray-200 w-36 h-10 flex justify-center items-center rounded-xl px-2 bg-white `}>
-                                <Text style={tw`text-[15px] text-center font-medium leading-7 capitalize text-gray-800`}>
-                                    View profile
-                                </Text>
-                            </View>
-                        </View>
                     }
 
                 </View>

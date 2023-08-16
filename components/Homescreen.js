@@ -33,6 +33,15 @@ function Homescreen({ navigation }) {
       navigation.navigate('emergency-request');
     }
   }
+  const handleRequestBlood = () => {
+    if (!user) {
+      navigation.navigate('login', {
+        userRole: 'Patient',
+      });
+    } else {
+      navigation.navigate('emergency-request' , { screen: 'add request' });
+    }
+  }
 
   return (
     <SafeAreaView style={tw`flex-1 flex pt-10 items-center bg-white`}>
@@ -68,7 +77,7 @@ function Homescreen({ navigation }) {
       </View>
 
       {/* <View style={tw`w-full mt-4 `}> */}
-        <TouchableOpacity  onPress={handleEmergencyRequest}  style={tw`bg-red-500 mt-4  rounded-md py-3 w-[87%] mx-auto flex flex-row gap-2 justify-center items-center`}>
+        <TouchableOpacity  onPress={handleRequestBlood}  style={tw`bg-red-500 mt-4  rounded-md py-3 w-[87%] mx-auto flex flex-row gap-2 justify-center items-center`}>
           <Text style={tw`text-white font-semibold text-base text-center uppercase`}>Request Blood</Text>
           <FontAwesome5 style={tw`text-[20px] text-white mt-0.5`} name={'angle-right'} />
         </TouchableOpacity>
