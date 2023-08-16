@@ -1,6 +1,6 @@
 
 import React, { useContext } from 'react';
-import { View, Text, Button, Image, ImageBackground, Pressable, StatusBar } from 'react-native';
+import { View, Text, Button, Image, ImageBackground, Pressable, StatusBar, TouchableOpacity } from 'react-native';
 import tw from 'twrnc';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -46,10 +46,10 @@ function Homescreen({ navigation }) {
 
       <View style={tw`mt-10  w-[87%] mx-auto`}>
         <View style={tw`flex flex-row gap-4 justify-between shadow-2xl shadow-black`}>
-          <Pressable onPress={handleFindDonors} style={tw`border border-gray-200 w-[47%] h-32 flex justify-center items-center rounded-xl px-2 pb-8 pt-5 mb-5 bg-red-400 shadow-2xl shadow-black`}>
+          <TouchableOpacity onPress={handleFindDonors} style={tw`border border-gray-200 w-[47%] h-32 flex justify-center items-center rounded-xl px-2 pb-8 pt-5 mb-5 bg-red-400 shadow-2xl shadow-black`}>
             <Image style={tw`w-11 h-11 mx-auto rounded-xl `} source={require('../assets/find-.png')} />
             <Text style={tw`text-[15px] mt-1 font-medium leading-7 uppercase text-white`}>Find Donors</Text>
-          </Pressable>
+          </TouchableOpacity>
           <Pressable onPress={handleBecomeDonor} style={tw`border border-gray-200 w-[47%] h-32 flex justify-center items-center rounded-xl px-2 pb-8 pt-5 mb-5 bg-white shadow-2xl shadow-black`}>
             <Image style={tw`w-10 h-10 mx-auto rounded-xl `} source={require('../assets/become.png')} />
             <Text style={tw`text-[15px] mt-1 font-medium leading-7 uppercase text-gray-800`}>Become a Donor</Text>
@@ -60,19 +60,19 @@ function Homescreen({ navigation }) {
             <Image style={tw`w-11 h-11 mx-auto rounded-xl `} source={require('../assets/emergency.png')} />
             <Text style={tw`text-[15px] mt-1 font-medium leading-7 uppercase text-gray-800`}>Emergency Requests</Text>
           </Pressable>
-          <Pressable onPress={handleFindDonors} style={tw`border border-gray-200 w-[47%] h-32 flex justify-center items-center rounded-xl px-2 pb-8 pt-5 mb-5 bg-white shadow-2xl shadow-black`}>
+          <Pressable onPress={() => navigation.navigate('testimonial')} style={tw`border border-gray-200 w-[47%] h-32 flex justify-center items-center rounded-xl px-2 pb-8 pt-5 mb-5 bg-white shadow-2xl shadow-black`}>
             <Image style={tw`w-11 h-11 mx-auto rounded-xl `} source={require('../assets/review.png')} />
             <Text style={tw`text-[15px] mt-1 font-medium leading-7 uppercase text-gray-800`}>Testimonials</Text>
           </Pressable>
         </View>
       </View>
 
-      <View style={tw`w-full mt-4 `}>
-        <Pressable style={tw`bg-red-500 rounded-md py-3 w-[87%] mx-auto flex flex-row gap-2 justify-center items-center`}>
+      {/* <View style={tw`w-full mt-4 `}> */}
+        <TouchableOpacity  onPress={handleEmergencyRequest}  style={tw`bg-red-500 mt-4  rounded-md py-3 w-[87%] mx-auto flex flex-row gap-2 justify-center items-center`}>
           <Text style={tw`text-white font-semibold text-base text-center uppercase`}>Request Blood</Text>
           <FontAwesome5 style={tw`text-[20px] text-white mt-0.5`} name={'angle-right'} />
-        </Pressable>
-      </View>
+        </TouchableOpacity>
+      {/* </View> */}
 
     </SafeAreaView>
   );

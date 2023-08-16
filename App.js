@@ -7,9 +7,8 @@ import tw from 'twrnc';
 
 
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator, TransitionPresets } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Homescreen from './components/Homescreen';
-import DetailsScreen from './components/DetailsScreen';
 import Signup from './screens/signup/Signup';
 import Login from './screens/login/Login';
 import AuthProvider from './providers/AuthProvider';
@@ -18,7 +17,8 @@ import GetStarted from './screens/get-started/GetStarted';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BottomTabNav from './navigation/BottomTabNav';
-import EmergencyRequest from './screens/emergency-request/EmergencyRequest';
+import Testimonials from './screens/testimonials/Testimonials';
+import TopTabNavOfEmergencyRequest from './navigation/TopTabNavOfEmergencyRequest';
 
 
 const Stack = createNativeStackNavigator();
@@ -70,7 +70,8 @@ export default function App() {
             <Stack.Screen name="get-started" component={GetStarted} options={{ headerShown: false }} />
             <Stack.Screen name="Sign-up" component={Signup} options={{ headerShown: false }} />
             <Stack.Screen name="login" component={Login} options={{ headerShown: false }} />
-            <Stack.Screen name="emergency-request" component={EmergencyRequest} options={{ headerShown: false }} />
+            <Stack.Screen name="emergency-request" component={TopTabNavOfEmergencyRequest} options={{ headerShown: false }} />
+            <Stack.Screen name="testimonial" component={Testimonials} options={{ headerShown: false }} />
             <Stack.Screen name="bottom-tab-nav" component={BottomTabNav} options={{ headerShown: false }} />
           </Stack.Navigator>
         </NavigationContainer>

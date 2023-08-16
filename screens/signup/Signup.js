@@ -25,26 +25,25 @@ const Signup = ({ navigation, route }) => {
     const [image, setImage] = useState(null);
     const { user, loading, createUser, updateUserProfile } = useContext(AuthContext);
     // console.log("Hey nishat", user, loading)
-    const { control, handleSubmit, formState: { errors }, watch, reset, clearErrors, setValue } = useForm();
+    const { control, handleSubmit, formState: { errors }, watch, reset, clearErrors, setError, setValue } = useForm();
     const password = watch('password');
     const confirmPassword = watch('confirmPassword');
 
+    // to set the value of input field role inititally, so that I dont get error after clicking signup, if user don't change the initial value.
     useEffect(() => {
         if (route.params) {
             const { userRole } = route.params;
             setSelectedRole(userRole || '');
+
+            if (userRole) {
+                setValue('role', userRole); 
+                if (errors.role) {
+                    clearErrors('role');
+                }
+            }
         }
     }, [route.params])
 
-
-    // useEffect(() => {
-    //     console.log("im in useeffect!");
-
-    //     fetch('http://192.168.0.105:5000/check')
-    //         .then(response => response.json())
-    //         .then(data => console.log(data))
-    //         .catch(error => console.error('Error fetching data:', error));
-    // }, [])
 
     // Listen for navigation events
     useEffect(() => {
@@ -85,15 +84,26 @@ const Signup = ({ navigation, route }) => {
     const handleBloodTypeChange = (itemValue) => {
         setselectedBloodType(itemValue)
         setValue('bloodType', itemValue); // Update the form value
-        if (itemValue && errors.bloodType) {
-            clearErrors('bloodType'); // Clear the "required" error
+        if(itemValue === 'Blood type.. *'){
+            setError('bloodType', { type: 'manual', message: 'required' });
+        }
+        else {
+            if (itemValue && errors.bloodType) {
+                clearErrors('bloodType'); // Clear the "required" error
+            }
         }
     };
     const handleRoleChange = (itemValue) => {
         setSelectedRole(itemValue)
         setValue('role', itemValue); // Update the form value
-        if (itemValue && errors.role) {
-            clearErrors('role'); // Clear the "required" error
+        console.log(itemValue)
+        if(itemValue === 'Role.. *'){
+            setError('role', { type: 'manual', message: 'required' });
+        }
+        else if(itemValue !== 'Role.. *'){
+            if (itemValue && errors.role) {
+                clearErrors('role'); // Clear the "required" error
+            }
         }
     };
 
@@ -132,7 +142,7 @@ const Signup = ({ navigation, route }) => {
                             bloodType: data.bloodType || "",
                             birthDate: data.birthDate || "",
                             userImage: data.userImage || "",
-                            role: data.role,
+                            role: data.role.toLowerCase(),
                             phone: data.phone,
                             area: data.area || ""
                         }
@@ -148,24 +158,21 @@ const Signup = ({ navigation, route }) => {
                             .then(data => {
                                 if (data.insertedId) {
                                     reset();
-                                    // Swal.fire({
-                                    //     position: 'top-end',
-                                    //     icon: 'success',
-                                    //     title: 'User created successfully.',
-                                    //     showConfirmButton: false,
-                                    //     timer: 1500
-                                    // });
                                     alert('You successfully registered!')
                                     setselectedBloodType("");
+                                    setSelectedRole("");
+                                    setDateOfBirth(null);
                                     setImage(null);
+                                    reset();
                                     navigation.navigate('bottom-tab-nav')
-                                    // FIX : navigate to profile if some
                                 }
                             })
-                            
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                        alert("Sign up failed!")
                     })
 
-                reset();
             })
             .catch(err => {
                 console.log("hey nishat im in error")
@@ -242,7 +249,7 @@ const Signup = ({ navigation, route }) => {
                                         <Picker.Item
                                             style={tw`h-0 text-[#a5a5a5] font-medium`}
                                             // onPress={open}
-                                            label={"Role.. *"} value="Role" />
+                                            label={"Role.. *"} value="Role.. *" />
                                         <Picker.Item style={tw`-mt-6 text-gray-900`} label="Patient" value="Patient" />
                                         <Picker.Item style={tw`-mt-6 text-gray-900`} label="Donor" value="Donor" />
                                     </Picker>
@@ -298,7 +305,7 @@ const Signup = ({ navigation, route }) => {
                                             <Picker.Item
                                                 style={tw`h-0 text-[#a5a5a5] font-medium`}
                                                 // onPress={open}
-                                                label="Blood type.. *" value="Gender" />
+                                                label="Blood type.. *" value="Blood type.. *" />
                                             <Picker.Item style={tw`-mt-6 text-gray-900`} label="A+" value="A+" />
                                             <Picker.Item style={tw`-mt-6 text-gray-900`} label="B+" value="B+" />
                                             <Picker.Item style={tw`-mt-6 text-gray-900`} label="AB+" value="AB+" />

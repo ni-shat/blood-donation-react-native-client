@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, Image, Pressable, StatusBar, Text, TextInput, View } from 'react-native';
 import tw from 'twrnc';
-import { useForm } from "react-hook-form";
 import { AuthContext } from '../../providers/AuthProvider';
 import { useRoute } from '@react-navigation/native';
+import { Controller, useForm } from "react-hook-form";
 
 const Login = ({ navigation }) => {
 
-    const { control, handleSubmit } = useForm();
+    const { control, handleSubmit, formState: { errors },  reset } = useForm();
     const { user, loading, signIn } = useContext(AuthContext);
     const [loginLoading, setLoginLoading] = useState(false);
     const [loginError, setLoginError] = useState("");
@@ -32,6 +32,7 @@ const Login = ({ navigation }) => {
 
         setLoginLoading(true);
         setLoginError("");
+        console.log("in sign in")
 
         signIn(data.email, data.password)
             .then(result => {
@@ -75,23 +76,47 @@ const Login = ({ navigation }) => {
 
                     {/* form */}
                     <View style={tw` py-10`} >
+
+
                         <View>
-                            <TextInput
-                                style={tw`text-base font-medium my-2 px-3 py-2.5 border border-gray-300 rounded-md text-gray-900`}
-                                placeholder="Email"
+                            <Controller
+                                control={control}
+                                rules={{
+                                    required: true,
+                                }}
+                                render={({ field: { onChange, onBlur, value } }) => (
+                                    <TextInput
+                                        style={tw`text-base font-medium my-1.5 px-3.5 py-2.5 border border-gray-300 rounded-md text-gray-900`}
+                                        placeholder="Email *"
+                                        onBlur={onBlur}
+                                        onChangeText={onChange}
+                                        value={value}
+                                    />
+                                )}
                                 name="email"
-                                control={control}
                             />
+                            {errors.email && <Text style={tw`text-red-600 text-xs`} >required</Text>}
                         </View>
                         <View>
-                            <TextInput
-                                style={tw`text-base font-medium my-2 px-3 py-2.5 border border-gray-300 rounded-md text-gray-900`}
-                                placeholder="Password"
-                                name="password"
+                            <Controller
                                 control={control}
-                                secureTextEntry // This hides the entered text
+                                rules={{
+                                    required: true,
+                                }}
+                                render={({ field: { onChange, onBlur, value } }) => (
+                                    <TextInput
+                                        style={tw`text-base font-medium my-1.5 px-3.5 py-2.5 border border-gray-300 rounded-md text-gray-900`}
+                                        placeholder="Email *"
+                                        onBlur={onBlur}
+                                        onChangeText={onChange}
+                                        value={value}
+                                    />
+                                )}
+                                name="password"
                             />
+                            {errors.password && <Text style={tw`text-red-600 text-xs`} >required</Text>}
                         </View>
+
                         {
                             loginError && <Text style={tw`text-red-600 `}>{loginError}</Text>
                         }

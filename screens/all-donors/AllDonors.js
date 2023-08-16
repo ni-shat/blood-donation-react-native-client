@@ -15,7 +15,7 @@ const AllDonors = ({ navigation }) => {
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    fetch('http://192.168.0.105:5000/users/all-donors')
+    fetch('http://192.168.0.105:5000/alldonors')
       .then(response => response.json())
       .then(data => setDonors(data))
       .catch(error => console.error('Error fetching data:', error));

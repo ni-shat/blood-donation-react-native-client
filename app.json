@@ -16,12 +16,20 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "config": {
+        "googleMapsApiKey": "AIzaSyD7sgT_QQM3o8JCuzJ2MOAtYssqA5RvYrw"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/blood-logo.png",
         "backgroundColor": "#ffffff"
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyD7sgT_QQM3o8JCuzJ2MOAtYssqA5RvYrw"
+        }
       }
     },
     "web": {
