@@ -127,7 +127,8 @@ const AddEmergencyRequest = ({ navigation }) => {
             bloodRequiredDate: data.bloodRequiredDate,
             phone: data.phone,
             area: data.area,
-            description: data.description || ""
+            description: data.description || "",
+            offeredHelp: ""
         }
         
          // post data into DB

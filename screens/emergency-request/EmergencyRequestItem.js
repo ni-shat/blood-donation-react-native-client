@@ -1,8 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons'; // Import your icon library
 import tw from 'twrnc';
+import { AuthContext } from '../../providers/AuthProvider';
 
 
 const EmergencyRequestItem = ({ item, handleCallButtonPress, handleEmailButtonPress }) => {
@@ -13,6 +14,30 @@ const EmergencyRequestItem = ({ item, handleCallButtonPress, handleEmailButtonPr
   const day = date.getDate().toString().padStart(2, '0');
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const year = date.getFullYear();
+  const { user } = useContext(AuthContext);
+
+
+  const handleOfferHelp = (id) => {
+    fetch(`http://192.168.0.105:5000/offer-help/${id}?email=${user?.email}`, {
+      method: 'PATCH',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({})
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log(data)
+        if (data.alreadyOffered === true) {
+          alert('You already Offered Help! Please wait for the responses from patient.')
+        }
+        else if(data.alreadyOffered === false) {
+          if (data.result.modifiedCount > 0) {
+            alert('You Offered Help!')
+          }
+        }
+      })
+  }
 
   return (
     <View style={tw`flex flex-row gap-3 items-center bg-white py-4 mt-2 w-[97%] mx-auto rounded-xl mb-1.5 shadow-2xl
@@ -31,7 +56,7 @@ const EmergencyRequestItem = ({ item, handleCallButtonPress, handleEmailButtonPr
         <View style={tw` w-[75%] `}>
           <Text style={tw`text-black text-xl font-medium`}>{item.name}</Text>
           <View style={tw`flex flex-row mt-0.5`}>
-            <Text style={tw`text-gray-900  text-sm font-medium mb-2.5 bg-gray-100 px-2 py-0.5 pb-1 rounded-md min-w-fit`}>{item.area}</Text>
+            <Text style={tw`text-gray-900  text-sm font-medium mb-2.5 bg-gray-100 px-2 py-0.5 pb-1 rounded-md `}>{item.area}</Text>
             <Text style={tw`flex-1`}></Text>
           </View>
 
@@ -81,7 +106,7 @@ const EmergencyRequestItem = ({ item, handleCallButtonPress, handleEmailButtonPr
                 />
               </TouchableOpacity>
             </View>
-            <TouchableOpacity style={tw`bg-red-600 px-2 w-24 mt-1 py-0.5 pb-1 rounded-xl`}>
+            <TouchableOpacity onPress={() => handleOfferHelp(item._id)} style={tw`bg-red-600 px-2 w-24 mt-1 py-0.5 pb-1 rounded-xl`}>
               <Text style={tw`text-white text-center`}>Offer Help</Text>
             </TouchableOpacity>
 
