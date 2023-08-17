@@ -23,7 +23,12 @@ const EmergencyRequestItem = ({ item, handleCallButtonPress, handleEmailButtonPr
       headers: {
         'content-type': 'application/json'
       },
-      body: JSON.stringify({})
+      body: JSON.stringify(
+        {
+          donor: user?.email,
+          emeregncyRequestId: id
+        }
+      )
     })
       .then(res => res.json())
       .then(data => {
@@ -31,8 +36,8 @@ const EmergencyRequestItem = ({ item, handleCallButtonPress, handleEmailButtonPr
         if (data.alreadyOffered === true) {
           alert('You already Offered Help! Please wait for the responses from patient.')
         }
-        else if(data.alreadyOffered === false) {
-          if (data.result.modifiedCount > 0) {
+        else if (data.alreadyOffered === false) {
+          if (data.resultRequestCollection.modifiedCount > 0 && data.resultAppliedRequestsCollection.insertedId) {
             alert('You Offered Help!')
           }
         }

@@ -128,7 +128,7 @@ const AddEmergencyRequest = ({ navigation }) => {
             phone: data.phone,
             area: data.area,
             description: data.description || "",
-            offeredHelp: ""
+            offeredHelp: []  // I have used empty array here, I will later update the array in backend, if any donor respond to the request.
         }
         
          // post data into DB
