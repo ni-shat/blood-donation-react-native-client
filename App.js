@@ -20,6 +20,7 @@ import BottomTabNav from './navigation/BottomTabNav';
 import Testimonials from './screens/testimonials/Testimonials';
 import TopTabNavOfEmergencyRequest from './navigation/TopTabNavOfEmergencyRequest';
 import NavEmergencyInfoDonor from './navigation/NavEmergencyInfoDonor';
+import SeeTotalResponses from './screens/emergency-information-donor/SeeTotalResponses';
 
 
 const Stack = createNativeStackNavigator();
@@ -72,6 +73,7 @@ export default function App() {
             <Stack.Screen name="Sign-up" component={Signup} options={{ headerShown: false }} />
             <Stack.Screen name="login" component={Login} options={{ headerShown: false }} />
             <Stack.Screen name="testimonial" component={Testimonials} options={{ headerShown: false }} />
+            <Stack.Screen name="see-total-responses" component={SeeTotalResponses} options={{ headerShown: false }} />
 
             <Stack.Screen name="emergency-request" component={TopTabNavOfEmergencyRequest} options={{ headerShown: false }} />
             <Stack.Screen name="nav-emergeny-info-donor" component={NavEmergencyInfoDonor} options={{ headerShown: false }} />

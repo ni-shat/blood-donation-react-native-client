@@ -1,16 +1,58 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons'; // Import your icon library
+import tw from 'twrnc';
+import { AuthContext } from '../../providers/AuthProvider';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { useNavigation } from '@react-navigation/native';
 
-const AppliedRequest = ({ item }) => {
+const MyPostedRequestItem = ({ item }) => {
+
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [isDisabled, setIsDisabled] = useState(false);
+    const [totalResponse, setTotalResponse] = useState([]);
+    const [numLines, setNumLines] = useState(0);
+    const date = new Date(item?.bloodRequiredDate);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    const { user } = useContext(AuthContext);
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        if (user?.email == item?.email) {
+            console.log("matched")
+            setIsDisabled(true)
+        }
+    }, [item])
+
+    // get total response for my posted emergency request
+    useEffect(() => {
+        fetch(`http://192.168.0.105:5000/emergency-req/total-response/${user?.email}`)
+            .then(response => response.json())
+            .then(data => setTotalResponse(data[0].offeredHelp))
+            .catch(error => console.error('Error fetching data:', error));
+    }, [])
+
+    console.log("MY Total responses:", totalResponse)
+
+
+    const handleTotalResponse = (totalResponse) => {
+        navigation.navigate('see-total-responses', {
+            totalResponse: totalResponse,
+        })
+    }
+
+
     return (
         <View style={tw`flex flex-row gap-3 items-center bg-white py-4 mt-2 w-[97%] mx-auto rounded-xl mb-1.5 shadow-2xl
-                  ${isExpanded ? 'max-h-[100%]' : 'max-h-52'}
-                  min-h-64
-                  `}>
+    ${isExpanded ? 'max-h-[100%]' : 'max-h-52'}
+    min-h-[260px]
+    `}>
             <View style={tw`flex flex-row flex-3 gap-4 items-center`}>
                 <View style={tw`rounded-full relative `}>
                     {/* <Image style={tw`w-14 h-32 rounded-xl `} source={require('../../assets/drop.jpg')} /> */}
-                    <View style={tw`bg-red-500 h-64 rounded-xl flex justify-center items-center w-14 relative`}>
+                    <View style={tw`bg-red-500 h-[260px] rounded-xl flex justify-center items-center w-14 relative`}>
                         <Text style={tw`absolute top-0 py-1.5 text-center rounded-xl rounded-b-none font-normal text-xs text-white bg-black w-full`}>urgent</Text>
                         <Text style={tw` font-extrabold text-3xl text-white`}>{item.bloodType}</Text>
                     </View>
@@ -69,8 +111,15 @@ const AppliedRequest = ({ item }) => {
                                 />
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity onPress={() => handleOfferHelp(item._id)} style={tw`bg-red-600 px-2 w-24 mt-1 py-0.5 pb-1 rounded-xl`}>
-                            <Text style={tw`text-white text-center`}>Offer Help</Text>
+                        <TouchableOpacity
+                            onPress={() => handleTotalResponse(totalResponse)}
+                            style={tw` px-2 flex flex-row  mt-1 py-1.5 pb-2 rounded-xl bg-blue-500`}
+                        >
+                            <Text style={tw`flex flex-row mx-auto items-center justify-center`}>
+                                <Text style={tw`text-white text-center`}>Total Response: </Text>
+                                <Text style={tw`text-white text-center`}> {totalResponse.length}</Text>
+                            </Text>
+                            <FontAwesome5 style={tw`text-[20px] text-white mr-1`} name={'angle-right'} />
                         </TouchableOpacity>
 
 
@@ -84,4 +133,4 @@ const AppliedRequest = ({ item }) => {
     )
 }
 
-export default AppliedRequest
+export default MyPostedRequestItem

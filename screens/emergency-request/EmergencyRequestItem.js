@@ -1,5 +1,5 @@
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons'; // Import your icon library
 import tw from 'twrnc';
@@ -9,12 +9,20 @@ import { AuthContext } from '../../providers/AuthProvider';
 const EmergencyRequestItem = ({ item, handleCallButtonPress, handleEmailButtonPress }) => {
 
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
   const [numLines, setNumLines] = useState(0);
   const date = new Date(item?.bloodRequiredDate);
   const day = date.getDate().toString().padStart(2, '0');
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const year = date.getFullYear();
   const { user } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (user?.email == item?.email) {
+      console.log("matched")
+      setIsDisabled(true)
+    }
+  }, [item])
 
 
   const handleOfferHelp = (id) => {
@@ -111,7 +119,11 @@ const EmergencyRequestItem = ({ item, handleCallButtonPress, handleEmailButtonPr
                 />
               </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={() => handleOfferHelp(item._id)} style={tw`bg-red-600 px-2 w-24 mt-1 py-0.5 pb-1 rounded-xl`}>
+            <TouchableOpacity
+              onPress={() => handleOfferHelp(item._id)}
+              style={tw` px-2 w-24 mt-1 py-0.5 pb-1 rounded-xl ${isDisabled ? 'bg-red-200' : 'bg-red-600'}`}
+              disabled={isDisabled}
+            >
               <Text style={tw`text-white text-center`}>Offer Help</Text>
             </TouchableOpacity>
 

@@ -6,10 +6,12 @@ import tw from 'twrnc';
 
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import MyEmergencyReqDonorItem from './MyPostedRequestItem';
+import MyPostedRequestItem from './MyPostedRequestItem';
 
 
 
-const MyEmergencrReqDonor = () => {
+const MyPostedEmergencyRequests = () => {
 
   const [myEmergencyRequests, setMyEmergencyRequests] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -55,7 +57,7 @@ const MyEmergencrReqDonor = () => {
                 data={filteredMyRequests}
 
                 renderItem={({ item }) => (
-                  <EmergencyRequestItem item={item} handleCallButtonPress={handleCallButtonPress}></EmergencyRequestItem>
+                  <MyPostedRequestItem item={item} ></MyPostedRequestItem>
                 )}
 
                 keyExtractor={item => item._id}
@@ -78,4 +80,4 @@ const MyEmergencrReqDonor = () => {
   )
 }
 
-export default MyEmergencrReqDonor
+export default MyPostedEmergencyRequests

@@ -2,14 +2,17 @@ import { View, Text } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import tw from 'twrnc';
-import MyEmergencrReqDonor from '../screens/emergency-information-donor/MyEmergencrReqDonor';
-import AppliedEmergencyReqDonor from '../screens/emergency-information-donor/appliedEmergencyReqDonor';
+import MyEmergencrReqDonor from '../screens/emergency-information-donor/MyPostedEmergencyRequests';
+import { AuthContext } from '../providers/AuthProvider';
+import OfferedEmergencyRequests from '../screens/emergency-information-donor/OfferedEmergencyRequests';
+import MyPostedEmergencyRequests from '../screens/emergency-information-donor/MyPostedEmergencyRequests';
 
 const Tab = createMaterialTopTabNavigator();
 
 const NavEmergencyInfoDonor = () => {
 
-
+    // const { user } = useContext(AuthContext);
+    // console.log(user)
 
     return (
         <Tab.Navigator
@@ -30,8 +33,10 @@ const NavEmergencyInfoDonor = () => {
                 },
             }}
         >
-            <Tab.Screen name="My Requests" component={MyEmergencrReqDonor} />
-            <Tab.Screen name="Applied Requests" component={AppliedEmergencyReqDonor} />
+            <Tab.Screen name="My Requests" component={MyPostedEmergencyRequests} />
+            <Tab.Screen name="Offered Requests" component={OfferedEmergencyRequests} />
+            {/* <Tab.Screen name="Applied Requests" component={appliedEmergencyReqDonor} /> */}
+           
 
 
         </Tab.Navigator>
