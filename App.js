@@ -31,6 +31,14 @@ export default function App() {
   const [isFirstLaunched, setIsFirstLaunched] = useState(null);
 
   useEffect(() => {
+    fetch('http://192.168.0.103:5000/alldonors')
+      // 192.168.0.103
+      .then(response => response.json())
+      .then(data => console.log("data", data))
+      .catch(error => console.error('Error fetching data:', error));
+  }, [])
+
+  useEffect(() => {
     async function checkFirstLaunch() {
       try {
         const value = await AsyncStorage.getItem('isFirstLaunched');

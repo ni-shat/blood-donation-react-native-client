@@ -12,7 +12,7 @@ const SeeResponse = ({ responseEmail }) => {
 
     // fetch all the information of the responded email who offered help.
     useEffect(() => {
-        fetch(`http://192.168.0.105:5000/emergency-requests/each-response/all-information/${responseEmail}`)
+        fetch(`http://192.168.0.103:5000/emergency-requests/each-response/all-information/${responseEmail}`)
             .then(response => response.json())
             .then(data => setAllInfoOfResponse(data))
             .catch(error => console.error('Error fetching data:', error));

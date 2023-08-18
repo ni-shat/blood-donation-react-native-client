@@ -117,7 +117,6 @@ const Signup = ({ navigation, route }) => {
     const onSubmit = data => {
         console.log("pressed submit")
         data.userImage = image;
-        // data.role = "donor";
         data.bloodType = selectedBloodType;
         data.birthDate = dateOfBirth.toDateString();
         delete data.confirmPassword;
@@ -138,7 +137,7 @@ const Signup = ({ navigation, route }) => {
                         console.log("in update userprofile")
                         const saveUser = {
                             name: data.name,
-                            email: data.email,
+                            email: data.email.toLowerCase(),
                             bloodType: data.bloodType || "",
                             birthDate: data.birthDate || "",
                             userImage: data.userImage || "",
@@ -147,7 +146,7 @@ const Signup = ({ navigation, route }) => {
                             area: data.area || ""
                         }
                         // after updating post data into DB
-                        fetch(`http://192.168.0.105:5000/users?email=${data.email}`, {
+                        fetch(`http://192.168.0.103:5000/users?email=${data.email}`, {
                             method: 'POST',
                             headers: {
                                 'content-type': 'application/json'

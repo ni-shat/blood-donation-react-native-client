@@ -19,14 +19,14 @@ const EmergencyRequestItem = ({ item, handleCallButtonPress, handleEmailButtonPr
 
   useEffect(() => {
     if (user?.email == item?.email) {
-      console.log("matched")
+      // console.log("matched")
       setIsDisabled(true)
     }
   }, [item])
 
 
   const handleOfferHelp = (id) => {
-    fetch(`http://192.168.0.105:5000/offer-help/${id}?email=${user?.email}`, {
+    fetch(`http://192.168.0.103:5000/offer-help/${id}?email=${user?.email}`, {
       method: 'PATCH',
       headers: {
         'content-type': 'application/json'

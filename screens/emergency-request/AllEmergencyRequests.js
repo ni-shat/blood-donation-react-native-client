@@ -19,7 +19,7 @@ const AllEmergencyRequests = () => {
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    fetch('http://192.168.0.105:5000/all-emergency-requests')
+    fetch('http://192.168.0.103:5000/all-emergency-requests')
       .then(response => response.json())
       .then(data => setEmergencyRequests(data))
       .catch(error => console.error('Error fetching data:', error));

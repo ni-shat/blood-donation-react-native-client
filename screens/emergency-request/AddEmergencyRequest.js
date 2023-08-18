@@ -6,7 +6,7 @@ import {
 import { AuthContext } from '../../providers/AuthProvider';
 import { Linking } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-// import { useForm } from 'react-hook-form';
+import * as Location from 'expo-location';
 
 
 import tw from 'twrnc';
@@ -15,6 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import useLatLongInfo from '../../hooks/useLatLongInfo';
 
 
 
@@ -28,13 +29,31 @@ const AddEmergencyRequest = ({ navigation }) => {
     const [isDatePickerClicked, setIsDatePickerClicked] = useState(false);
     const [loggedUser, setLoggedUser] = useState([]);
 
+
+    const getLocationInfo = async (address) => {
+        try {
+            const locationResult = await Location.geocodeAsync(address);
+
+            if (locationResult.length > 0) {
+                // setLocationInfo(locationResult[0]);
+                return locationResult[0];
+            } else {
+                return { error: 'Location not found' };
+            }
+        } catch (error) {
+            console.error('Error fetching location info:', error);
+            return { error: 'Error fetching location' };
+        }
+    };
+
+
     const pickerRef = useRef();
     const { user, loading } = useContext(AuthContext);
     const { control, handleSubmit, formState: { errors }, watch, reset, clearErrors, setError, setValue } = useForm();
 
 
     useEffect(() => {
-        fetch(`http://192.168.0.105:5000/users/${user?.email}`)
+        fetch(`http://192.168.0.103:5000/users/${user?.email}`)
             .then(res => res.json())
             .then(data => {
                 setLoggedUser(data);
@@ -73,8 +92,6 @@ const AddEmergencyRequest = ({ navigation }) => {
     }, [navigation]);
 
 
-
-
     const handleBloodTypeChange = (itemValue) => {
         setselectedBloodType(itemValue)
         setValue('bloodType', itemValue); // Update the form value
@@ -103,10 +120,11 @@ const AddEmergencyRequest = ({ navigation }) => {
         }
         setIsDatePickerClicked(true);
         setShowDatePicker(Platform.OS === 'ios');
-
     };
 
-    const onSubmit = data => {
+
+
+    const onSubmit = async (data) => {
         console.log("pressed submit")
 
         data.email = loggedUser?.email;
@@ -114,6 +132,13 @@ const AddEmergencyRequest = ({ navigation }) => {
         data.description = data.description.trim();
         data.name = data.name.trim();
         data.phone = data.phone.trim();
+        
+         // call getLocationInfo hook here to get latitude and longitude of the location 
+        const latLong = await getLocationInfo(data.area);
+        console.log("latLong", latLong);
+        data.latitude = latLong.latitude.toString();
+        data.longitude = latLong.longitude.toString();
+
         console.log(data);
 
 
@@ -127,29 +152,31 @@ const AddEmergencyRequest = ({ navigation }) => {
             bloodRequiredDate: data.bloodRequiredDate,
             phone: data.phone,
             area: data.area,
+            latitude: data.latitude,
+            longitude: data.longitude,
             description: data.description || "",
             offeredHelp: []  // I have used empty array here, I will later update the array in backend, if any donor respond to the request.
         }
-        
-         // post data into DB
-            fetch(`http://192.168.0.105:5000/patient/emergency-request`, {
-                method: 'POST',
-                headers: {
-                    'content-type': 'application/json'
-                },
-                body: JSON.stringify(saveRequest)
+
+        // post data into DB
+        fetch(`http://192.168.0.103:5000/patient/emergency-request`, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(saveRequest)
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.insertedId) {
+                    reset();
+                    alert('Successfully posted!')
+                    setselectedBloodType("");
+                    setbloodRequiredDate(null);
+                    reset();
+                    navigation.navigate('bottom-tab-nav')
+                }
             })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.insertedId) {
-                        reset();
-                        alert('Successfully posted!')
-                        setselectedBloodType("");
-                        setbloodRequiredDate(null);
-                        reset();
-                        navigation.navigate('bottom-tab-nav')
-                    }
-                })
 
     };
 

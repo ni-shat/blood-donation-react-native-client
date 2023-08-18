@@ -21,14 +21,14 @@ const MyPostedRequestItem = ({ item }) => {
 
     useEffect(() => {
         if (user?.email == item?.email) {
-            console.log("matched")
+            // console.log("matched")
             setIsDisabled(true)
         }
     }, [item])
 
     // get total response for my posted emergency request
     useEffect(() => {
-        fetch(`http://192.168.0.105:5000/emergency-req/total-response/${user?.email}`)
+        fetch(`http://192.168.0.103:5000/emergency-req/total-response/${user?.email}`)
             .then(response => response.json())
             .then(data => setTotalResponse(data[0].offeredHelp))
             .catch(error => console.error('Error fetching data:', error));
