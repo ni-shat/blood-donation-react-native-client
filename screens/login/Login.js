@@ -106,7 +106,7 @@ const Login = ({ navigation }) => {
                                 render={({ field: { onChange, onBlur, value } }) => (
                                     <TextInput
                                         style={tw`text-base font-medium my-1.5 px-3.5 py-2.5 border border-gray-300 rounded-md text-gray-900`}
-                                        placeholder="Email *"
+                                        placeholder="Password *"
                                         onBlur={onBlur}
                                         onChangeText={onChange}
                                         value={value}

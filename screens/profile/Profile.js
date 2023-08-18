@@ -47,7 +47,7 @@ const Profile = () => {
             })
             .catch(err => console.log(err))
     }
-    console.log(loggedUser)
+    console.log("loggedUser", loggedUser)
 
 
 

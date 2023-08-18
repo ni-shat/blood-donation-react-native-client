@@ -47,7 +47,9 @@
     "twrnc": "^3.6.4",
     "yarn": "^1.22.19",
     "react-native-pager-view": "6.2.0",
-    "expo-location": "~16.1.0"
+    "expo-location": "~16.1.0",
+    "expo-notifications": "~0.20.1",
+    "expo-device": "~5.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

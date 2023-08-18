@@ -24,18 +24,17 @@ import SeeTotalResponses from './screens/emergency-information-donor/SeeTotalRes
 
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
-import EmergencyAlertsTerms from './screens/EmergencyAlertsTerms/EmergencyAlertsTerms';
 
 
 const Stack = createNativeStackNavigator();
 
-// Notifications.setNotificationHandler({
-//   handleNotification: async () => ({
-//     shouldShowAlert: true,
-//     shouldPlaySound: false,
-//     shouldSetBadge: false,
-//   }),
-// });
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 export default function App() {
 
@@ -92,17 +91,17 @@ export default function App() {
     checkFirstLaunch();
   }, [])
 
-  // console.log("expoPushToken", expoPushToken)
+  console.log("expoPushToken", expoPushToken)
 
   return (
 
     <>
       <StatusBar style='dark' />
-      <AuthProvider>
+      {/* <AuthProvider>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName={isFirstLaunched ? 'onboarding-starter' : 'bottom-tab-nav'}
-            // initialRouteName={'onboarding-starter'}
+            // initialRouteName={isFirstLaunched ? 'onboarding-starter' : 'Home'}
+            initialRouteName={'onboarding-starter'}
           >
             <Stack.Screen name="Home" component={Homescreen} options={{ headerShown: false }} />
             <Stack.Screen name="onboarding-starter" component={OnboardingStarter} options={{ headerShown: false }} />
@@ -113,14 +112,13 @@ export default function App() {
             <Stack.Screen name="see-total-responses" component={SeeTotalResponses} options={{ headerShown: false }} />
 
             <Stack.Screen name="emergency-request" component={TopTabNavOfEmergencyRequest} options={{ headerShown: false }} />
-            <Stack.Screen name="emergency-alerts-terms" component={EmergencyAlertsTerms} options={{ headerShown: false }} />
             <Stack.Screen name="nav-emergeny-info-donor" component={NavEmergencyInfoDonor} options={{ headerShown: false }} />
             <Stack.Screen name="bottom-tab-nav" component={BottomTabNav} options={{ headerShown: false }} />
           </Stack.Navigator>
         </NavigationContainer>
-      </AuthProvider>
+      </AuthProvider> */}
 
-      {/* <View
+      <View
         style={{
           flex: 1,
           alignItems: 'center',
@@ -136,10 +134,10 @@ export default function App() {
         <Button
           title="Press to schedule a notification"
           onPress={async () => {
-            await sendPushNotification(expoPushToken);
+            await schedulePushNotification();
           }}
         />
-      </View> */}
+      </View>
 
     </>
   );
@@ -148,42 +146,18 @@ export default function App() {
 
 
 //send notification to user
-// async function schedulePushNotification() {
-//   await Notifications.scheduleNotificationAsync({
-//     content: {
-//       title: "You've got mail! 📬",
-//       body: 'Here is the notification body',
-//       data: { data: 'goes here' },
-//     },
-//     trigger: { seconds: 2 },
-//     channelId: 'default', // Set the appropriate channel ID
-//     to: "QqByNDEQAwNLn8n3oI-VOS",
-//   });
-// }
-// Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
-async function sendPushNotification(expoPushToken) {
-  console.log("nishat", expoPushToken)
-  // ExponentPushToken[QqByNDEQAwMLn5n3oI-VOS]
-  // ExponentPushToken[rc19aqOmNg9uUzFNDGhlEc]
-  const message = {
-    to: expoPushToken,
-    sound: 'default',
-    title: 'Urgent Blood Emergency Nearby',
-    body: 'Someone need blood in your area! Your Blood Type is a Match!',
-    data: { someData: 'goes here' },
-  };
-
-  await fetch('https://exp.host/--/api/v2/push/send', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Accept-encoding': 'gzip, deflate',
-      'Content-Type': 'application/json',
+async function schedulePushNotification() {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "You've got mail! 📬",
+      body: 'Here is the notification body',
+      data: { data: 'goes here' },
     },
-    body: JSON.stringify(message),
+    trigger: { seconds: 2 },
+    channelId: 'default', // Set the appropriate channel ID
+    to: "QqByNDEQAwNLn8n3oI-VOS",
   });
 }
-
 
 async function registerForPushNotificationsAsync() {
   let token;
