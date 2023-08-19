@@ -16,6 +16,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import useLatLongInfo from '../../hooks/useLatLongInfo';
+import useAllEmergencyRequests from '../../hooks/useAllEmergencyRequests';
 
 
 
@@ -29,6 +30,8 @@ const AddEmergencyRequest = ({ navigation }) => {
     const [isDatePickerClicked, setIsDatePickerClicked] = useState(false);
     const [loggedUser, setLoggedUser] = useState([]);
     const [expoDonorTokens, setExpoDonorTokens] = useState([]);
+
+    const [ , refetch ] = useAllEmergencyRequests();
 
 
     useEffect(() => {
@@ -208,7 +211,7 @@ const AddEmergencyRequest = ({ navigation }) => {
             latitude: data.latitude,
             longitude: data.longitude,
             description: data.description || "",
-            offeredHelp: []  // I have used empty array here, I will later update the array in backend, if any donor respond to the request.
+            offeredHelp: []  //I have used empty array here, I will later update the array in backend, if any donor respond to the request.
         }
 
         // post data into DB
@@ -224,6 +227,7 @@ const AddEmergencyRequest = ({ navigation }) => {
             .then(data => {
                 if (data.insertedId) {
 
+                    refetch();
                     console.log("lattitude and longitude: ", lat, long, BType)
                     // 192.168.60.145
 

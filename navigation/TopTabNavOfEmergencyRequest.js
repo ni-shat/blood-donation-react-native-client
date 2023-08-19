@@ -5,6 +5,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import tw from 'twrnc';
 import AllEmergencyRequests from '../screens/emergency-request/AllEmergencyRequests';
 import AddEmergencyRequest from '../screens/emergency-request/AddEmergencyRequest';
+import useAllEmergencyRequests from '../hooks/useAllEmergencyRequests';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -25,6 +26,12 @@ const Tab = createMaterialTopTabNavigator();
 
 
 const TopTabNavOfEmergencyRequest = () => {
+
+    // const [ allEmergencyRequests, refetch ] = useAllEmergencyRequests();
+
+    // console.log(allEmergencyRequests)
+
+
     return (
         <Tab.Navigator
             // screenOptions={screenOptions}

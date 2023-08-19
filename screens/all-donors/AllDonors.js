@@ -8,6 +8,7 @@ import { AuthContext } from '../../providers/AuthProvider';
 import { Linking } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
+import useAllDonors from '../../hooks/useAllDonors';
 
 const AllDonors = ({ navigation }) => {
 
@@ -15,13 +16,16 @@ const AllDonors = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const { user } = useContext(AuthContext);
 
-  const { data: alldonors = [], isLoading: loading, refetch } = useQuery({
-    queryKey: ['alldonors'],
-    queryFn: async () => {
-      const res = await fetch('http://192.168.0.103:5000/alldonors');
-      return res.json();
-    }
-  }) 
+  // const { data: alldonors = [], isLoading: loading, refetch } = useQuery({
+  //   queryKey: ['alldonors'],
+  //   queryFn: async () => {
+  //     const res = await fetch('http://192.168.0.103:5000/alldonors');
+  //     return res.json();
+  //   }
+  // }) 
+
+  const [ alldonors, refetch ] = useAllDonors();
+
   console.log("todosQuery", alldonors)
 
   // useEffect(() => {

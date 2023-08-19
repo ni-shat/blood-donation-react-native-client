@@ -9,6 +9,8 @@ import {
 } from '@expo/vector-icons'
 import DonorProfile from './DonorProfile';
 import PatientProfile from './PatientProfile';
+import useAllDonors from '../../hooks/useAllDonors';
+import useCurrentAvailibility from '../../hooks/useCurrentAvailibility';
 
 const Profile = () => {
 
@@ -18,6 +20,10 @@ const Profile = () => {
     const navigation = useNavigation();
     const isFocused = useIsFocused();
     const [isAvailable, setIsAvailable] = useState(false);
+    const [isPermitted, setIsPermitted] = useState(false); //setting permission of donors for alert
+
+    const [, refetch] = useAllDonors();
+    const [currentAvailibilityQuery, currentAvailibilityRefetch] = useCurrentAvailibility();
 
 
     useEffect(() => {
@@ -91,8 +97,29 @@ const Profile = () => {
                         })
                             .then(res => res.json())
                             .then(data => {
-                                if (data.modifiedCount > 0) {
-                                    setIsAvailable(!available);
+                                console.log(data) // I get two data / one data. 
+                                // Now check what is the length
+                                /**
+                                 * {"result1": {"acknowledged": true, "matchedCount": 1, "modifiedCount": 1, "upsertedCount": 0, "upsertedId": null}}
+                                 * 
+                                 * {
+                                 * "result1": {"acknowledged": true, "matchedCount": 1, "modifiedCount": 0, "upsertedCount": 0, "upsertedId": null}, 
+                                 * "result2": {"acknowledged": true, "matchedCount": 1, "modifiedCount": 0, "upsertedCount": 0, "upsertedId": null}
+                                 * }
+                                 */
+                                if (Object.keys(data) == 1) {
+                                    if (data.result1.modifiedCount > 0) {
+                                        setIsAvailable(!available);
+                                        currentAvailibilityRefetch(); //refetch current availibility
+                                        refetch(); //refetch to move the donor from search donors page
+                                    }
+                                }
+                                else {
+                                    if (data.result1.modifiedCount > 0 && data.result1.modifiedCount > 0 ) {
+                                        setIsAvailable(!available);
+                                        currentAvailibilityRefetch();
+                                        refetch(); //refetch to move the donor from search donors page
+                                    }
                                 }
                             })
 
@@ -209,7 +236,13 @@ const Profile = () => {
             {/* main div */}
             {
                 loggedUser?.role?.toLowerCase() === 'donor' &&
-                <DonorProfile loggedUserBloodType={loggedUserBloodType} email={loggedUser.email}></DonorProfile>
+                <DonorProfile
+                    loggedUserBloodType={loggedUserBloodType}
+                    email={loggedUser.email}
+                    isPermitted={isPermitted}
+                    setIsPermitted={setIsPermitted}
+                    currentAvailibilityQuery={currentAvailibilityQuery}
+                ></DonorProfile>
             }
             {
                 loggedUser?.role?.toLowerCase() == 'patient' &&

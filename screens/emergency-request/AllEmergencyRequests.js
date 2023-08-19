@@ -9,23 +9,26 @@ import {
 import { Linking } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import EmergencyRequestItem from './EmergencyRequestItem';
+import useAllEmergencyRequests from '../../hooks/useAllEmergencyRequests';
 
 
 const AllEmergencyRequests = () => {
 
-  const [EmergencyRequests, setEmergencyRequests] = useState([]);
+  // const [EmergencyRequests, setEmergencyRequests] = useState([]);
   const [donors, setDonors] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const { user } = useContext(AuthContext);
 
-  useEffect(() => {
-    fetch('http://192.168.0.103:5000/all-emergency-requests')
-      .then(response => response.json())
-      .then(data => setEmergencyRequests(data))
-      .catch(error => console.error('Error fetching data:', error));
-  }, [])
+  const [ allEmergencyRequests, refetch ] = useAllEmergencyRequests();
 
-  const filteredAllRequests = EmergencyRequests.filter(request =>
+  // useEffect(() => {
+  //   fetch('http://192.168.0.103:5000/all-emergency-requests')
+  //     .then(response => response.json())
+  //     .then(data => setEmergencyRequests(data))
+  //     .catch(error => console.error('Error fetching data:', error));
+  // }, [])
+
+  const filteredAllRequests = allEmergencyRequests.filter(request =>
     request.bloodType.toLowerCase().includes(searchQuery.toLowerCase())
   );
 

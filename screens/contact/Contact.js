@@ -8,8 +8,6 @@ const Contact = () => {
 
     const webViewUri = 'https://ni-shat.github.io/emailjs-template/';
 
-
-
     return (
         <View style={tw`pt-0 px-0 flex-1`}>
             <WebView source={{ uri: webViewUri }} />
