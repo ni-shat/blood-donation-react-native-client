@@ -25,9 +25,14 @@ import SeeTotalResponses from './screens/emergency-information-donor/SeeTotalRes
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import EmergencyAlertsTerms from './screens/EmergencyAlertsTerms/EmergencyAlertsTerms';
+import Contact from './screens/contact/Contact';
+import DonationRequests from './screens/donation-request/DonationRequests';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 
 const Stack = createNativeStackNavigator();
+// Create a client
+const queryClient = new QueryClient()
 
 // Notifications.setNotificationHandler({
 //   handleNotification: async () => ({
@@ -99,25 +104,28 @@ export default function App() {
     <>
       <StatusBar style='dark' />
       <AuthProvider>
-        <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName={isFirstLaunched ? 'onboarding-starter' : 'bottom-tab-nav'}
+        <QueryClientProvider client={queryClient}>
+          <NavigationContainer>
+            <Stack.Navigator
+              initialRouteName={isFirstLaunched ? 'onboarding-starter' : 'bottom-tab-nav'}
             // initialRouteName={'onboarding-starter'}
-          >
-            <Stack.Screen name="Home" component={Homescreen} options={{ headerShown: false }} />
-            <Stack.Screen name="onboarding-starter" component={OnboardingStarter} options={{ headerShown: false }} />
-            <Stack.Screen name="get-started" component={GetStarted} options={{ headerShown: false }} />
-            <Stack.Screen name="Sign-up" component={Signup} options={{ headerShown: false }} />
-            <Stack.Screen name="login" component={Login} options={{ headerShown: false }} />
-            <Stack.Screen name="testimonial" component={Testimonials} options={{ headerShown: false }} />
-            <Stack.Screen name="see-total-responses" component={SeeTotalResponses} options={{ headerShown: false }} />
+            >
+              <Stack.Screen name="Home" component={Homescreen} options={{ headerShown: false }} />
+              <Stack.Screen name="onboarding-starter" component={OnboardingStarter} options={{ headerShown: false }} />
+              <Stack.Screen name="get-started" component={GetStarted} options={{ headerShown: false }} />
+              <Stack.Screen name="Sign-up" component={Signup} options={{ headerShown: false }} />
+              <Stack.Screen name="login" component={Login} options={{ headerShown: false }} />
+              <Stack.Screen name="contact" component={Contact} options={{ headerShown: false }} />
+              <Stack.Screen name="see-total-responses" component={SeeTotalResponses} options={{ headerShown: false }} />
+              <Stack.Screen name="donation-requests-to-donor" component={DonationRequests} options={{ headerShown: false }} />
 
-            <Stack.Screen name="emergency-request" component={TopTabNavOfEmergencyRequest} options={{ headerShown: false }} />
-            <Stack.Screen name="emergency-alerts-terms" component={EmergencyAlertsTerms} options={{ headerShown: false }} />
-            <Stack.Screen name="nav-emergeny-info-donor" component={NavEmergencyInfoDonor} options={{ headerShown: false }} />
-            <Stack.Screen name="bottom-tab-nav" component={BottomTabNav} options={{ headerShown: false }} />
-          </Stack.Navigator>
-        </NavigationContainer>
+              <Stack.Screen name="emergency-request" component={TopTabNavOfEmergencyRequest} options={{ headerShown: false }} />
+              <Stack.Screen name="emergency-alerts-terms" component={EmergencyAlertsTerms} options={{ headerShown: false }} />
+              <Stack.Screen name="nav-emergeny-info-donor" component={NavEmergencyInfoDonor} options={{ headerShown: false }} />
+              <Stack.Screen name="bottom-tab-nav" component={BottomTabNav} options={{ headerShown: false }} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </QueryClientProvider>
       </AuthProvider>
 
       {/* <View

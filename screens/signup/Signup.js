@@ -143,8 +143,10 @@ const Signup = ({ navigation, route }) => {
                             userImage: data.userImage || "",
                             role: data.role.toLowerCase(),
                             phone: data.phone,
-                            area: data.area || ""
+                            area: data.area || "",
+                            available: true
                         }
+                        console.log("updated data in authprovider");
                         // after updating post data into DB
                         fetch(`http://192.168.0.103:5000/users?email=${data.email}`, {
                             method: 'POST',

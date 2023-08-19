@@ -4,7 +4,7 @@ import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import useNotificationToken from '../../hooks/useNotificationToken';
-import { AuthContext } from '../../providers/AuthProvider';
+// import { AuthContext } from '../../providers/AuthProvider';
 
 // Notifications.setNotificationHandler({
 //   handleNotification: async () => ({
@@ -16,15 +16,13 @@ import { AuthContext } from '../../providers/AuthProvider';
 
 
 
-const DonorProfile = () => {
+const DonorProfile = ({ loggedUserBloodType, email }) => {
   const navigation = useNavigation();
-  // const [alert, setAlert] = useState(null);
-  const { user } = useContext(AuthContext);
   const [isPermitted, setIsPermitted] = useState(false);
 
   // get is the user already permit for notifications
   useEffect(() => {
-    fetch(`http://192.168.0.103:5000/donor-permission/${user?.email}`)
+    fetch(`http://192.168.0.103:5000/donor-permission/${email}`)
       .then(res => res.json())
       .then(data => {
         console.log("data.userExist", data.userExist)
@@ -53,19 +51,18 @@ const DonorProfile = () => {
     const location = await getLocationAsync();
     const latitudeOflocation = location.coords.latitude;
     const longitudeOflocation = location.coords.longitude;
-    // console.log(latitudeOflocation, longitudeOflocation)
-
-    // console.log("nihsat tabassum", tokenExpo);
+    console.log("token for each device in profile page", tokenExpo)
 
     const saveUser = {
       latitudeOflocation: latitudeOflocation,
       longitudeOflocation: longitudeOflocation,
       tokenExpo: tokenExpo,
-      email: user?.email
+      email: email,
+      bloodType: loggedUserBloodType
     }
 
     // 192.168.0.103
-    fetch(`http://192.168.0.103:5000/available-users/for-emergency-alerts/${user?.email}`, {
+    fetch(`http://192.168.0.103:5000/available-users/for-emergency-alerts/${email}`, {
       method: 'POST',
       headers: {
         'content-type': 'application/json'
@@ -83,6 +80,7 @@ const DonorProfile = () => {
 
   }
 
+
   // Update location in db after user clicking update location
   const UpdateLocationInDb = async () => {
     const location = await getLocationAsync();
@@ -95,7 +93,7 @@ const DonorProfile = () => {
     }
 
     // 192.168.0.103
-    fetch(`http://192.168.0.103:5000/update/donor-location/${user?.email}`, {
+    fetch(`http://192.168.0.103:5000/update/donor-location/${email}`, {
       method: 'PATCH',
       headers: {
         'content-type': 'application/json'
@@ -106,8 +104,8 @@ const DonorProfile = () => {
       .then(data => {
         if (data.modifiedCount > 0) {
           alert('Successfully updated the location!')
-        } 
-        else if(data.modifiedCount == 0) {
+        }
+        else if (data.modifiedCount == 0) {
           alert('You are at the same location you were before. Thanks.')
         }
       })
@@ -125,6 +123,10 @@ const DonorProfile = () => {
 
   const handleUpdateLocation = async () => {
     await UpdateLocationInDb();
+  }
+
+  const handleDonationRequest = () => {
+    navigation.navigate('donation-requests-to-donor')
   }
 
 
@@ -170,9 +172,9 @@ const DonorProfile = () => {
           <Image style={tw`w-11 h-11 mx-auto rounded-xl `} source={require('../../assets/review.png')} />
           <Text style={tw`text-[15px] text-center mt-1 font-medium leading-7 uppercase text-gray-800`}>Emergency Request Information</Text>
         </Pressable>
-        <Pressable style={tw`border border-gray-200 w-[40%] h-32 flex justify-center items-center rounded-xl px-2 pb-8 pt-5 mb-5 bg-white shadow-2xl shadow-black`}>
+        <Pressable onPress={handleDonationRequest} style={tw`border border-gray-200 w-[40%] h-32 flex justify-center items-center rounded-xl px-2 pb-8 pt-5 mb-5 bg-white shadow-2xl shadow-black`}>
           <Image style={tw`w-11 h-11 mx-auto rounded-xl `} source={require('../../assets/emergency.png')} />
-          <Text style={tw`text-[15px] text-center mt-1 font-medium leading-7 uppercase text-gray-800`}>Donation History</Text>
+          <Text style={tw`text-[15px] text-center mt-1 font-medium leading-7 uppercase text-gray-800`}>Donation Requests</Text>
         </Pressable>
       </View>
     </View>

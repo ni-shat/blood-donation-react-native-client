@@ -69,9 +69,9 @@ function Homescreen({ navigation }) {
             <Image style={tw`w-11 h-11 mx-auto rounded-xl `} source={require('../assets/emergency.png')} />
             <Text style={tw`text-[15px] mt-1 font-medium leading-7 uppercase text-gray-800`}>Emergency Requests</Text>
           </Pressable>
-          <Pressable onPress={() => navigation.navigate('testimonial')} style={tw`border border-gray-200 w-[47%] h-32 flex justify-center items-center rounded-xl px-2 pb-8 pt-5 mb-5 bg-white shadow-2xl shadow-black`}>
-            <Image style={tw`w-11 h-11 mx-auto rounded-xl `} source={require('../assets/review.png')} />
-            <Text style={tw`text-[15px] mt-1 font-medium leading-7 uppercase text-gray-800`}>Testimonials</Text>
+          <Pressable onPress={() => navigation.navigate('contact')} style={tw`border border-gray-200 w-[47%] h-32 flex justify-center items-center rounded-xl px-2 pb-8 pt-5 mb-5 bg-white shadow-2xl shadow-black`}>
+            <Image style={tw`w-12 h-12 mx-auto  `} source={require('../assets/contact.jpg')} />
+            <Text style={tw`text-[15px] mt-1 font-medium leading-7 uppercase text-gray-800`}>Contact Us</Text>
           </Pressable>
         </View>
       </View>

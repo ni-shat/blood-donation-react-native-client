@@ -28,6 +28,49 @@ const AddEmergencyRequest = ({ navigation }) => {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [isDatePickerClicked, setIsDatePickerClicked] = useState(false);
     const [loggedUser, setLoggedUser] = useState([]);
+    const [expoDonorTokens, setExpoDonorTokens] = useState([]);
+
+
+    useEffect(() => {
+        const sendPushNotification = async (expoPushToken) => {
+
+            console.log("nishat", expoPushToken)
+            const message = {
+                to: expoPushToken,
+                sound: 'default',
+                title: 'Urgent Blood Emergency Nearby',
+                body: 'Someone need blood in your area! Your Blood Type is a Match!',
+                data: { someData: 'goes here' },
+            };
+
+            await fetch('https://exp.host/--/api/v2/push/send', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Accept-encoding': 'gzip, deflate',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(message),
+            });
+
+        }
+        if (expoDonorTokens.length > 0) {
+            for (const token of expoDonorTokens) {
+                console.log("users token: ", token)
+                sendPushNotification(token);
+            }
+            navigation.navigate('bottom-tab-nav');
+        }
+    }, [expoDonorTokens])
+
+    // Return a cleanup function to clear tokens when the component unmounts
+    useEffect(() => {
+        return () => {
+            setExpoDonorTokens([]);
+        };
+    }, []);
+
+
 
 
     const getLocationInfo = async (address) => {
@@ -122,6 +165,12 @@ const AddEmergencyRequest = ({ navigation }) => {
         setShowDatePicker(Platform.OS === 'ios');
     };
 
+    // const handleNearby = () => {
+    //     // now fetch nearby donors to send them notifications. /find-nearby-donors
+    //     // http://localhost:5000/find-nearby-donors/?latitude=24.891116&longitude=91.891277&bloodTypes=AB-
+
+    // }
+
 
 
     const onSubmit = async (data) => {
@@ -132,14 +181,18 @@ const AddEmergencyRequest = ({ navigation }) => {
         data.description = data.description.trim();
         data.name = data.name.trim();
         data.phone = data.phone.trim();
-        
-         // call getLocationInfo hook here to get latitude and longitude of the location 
+
+        // call getLocationInfo hook here to get latitude and longitude of the location 
         const latLong = await getLocationInfo(data.area);
         console.log("latLong", latLong);
         data.latitude = latLong.latitude.toString();
         data.longitude = latLong.longitude.toString();
 
-        console.log(data);
+        // console.log(data);
+        // data for fetching geo location
+        const lat = data.latitude;
+        const long = data.longitude;
+        const BType = encodeURIComponent(data.bloodType);
 
 
         // setSignupLoading(true);
@@ -159,6 +212,7 @@ const AddEmergencyRequest = ({ navigation }) => {
         }
 
         // post data into DB
+        let flag = 0
         fetch(`http://192.168.0.103:5000/patient/emergency-request`, {
             method: 'POST',
             headers: {
@@ -169,15 +223,57 @@ const AddEmergencyRequest = ({ navigation }) => {
             .then(res => res.json())
             .then(data => {
                 if (data.insertedId) {
-                    reset();
-                    alert('Successfully posted!')
-                    setselectedBloodType("");
-                    setbloodRequiredDate(null);
-                    reset();
-                    navigation.navigate('bottom-tab-nav')
+
+                    console.log("lattitude and longitude: ", lat, long, BType)
+                    // 192.168.60.145
+
+                    fetch(`http://192.168.0.103:5000/find-nearby-donors?latitude=${lat}&longitude=${long}&bloodType=${BType}`)
+                        .then(response => response.json())
+                        .then(nearbyDonorsData => {
+                            console.log("fetching nearby donors:", nearbyDonorsData); // Handle the response from /find-nearby-donors API
+                            reset();
+                            alert('Successfully posted!')
+                            setselectedBloodType("");
+                            setbloodRequiredDate(null);
+
+                            let tokenArrTmp = [];
+                            for (const donor of nearbyDonorsData) {
+                                tokenArrTmp.push(donor.tokenExpo);
+                            }
+                            console.log("tokenArrTmp got from extracting", tokenArrTmp)
+                            setExpoDonorTokens(tokenArrTmp);
+
+                            // navigation.navigate('bottom-tab-nav');
+                        })
+                        .catch(error => {
+                            console.error('Error fetching nearby donors:', error);
+                        });
+
+                    /**
+                     * fetching nearby donors: 
+                     * [
+                     * {"_id": "64dffd5f9913794b0d6d6eab", 
+                     * "distance": 668.8858247961474, 
+                     * "email": "nusrat@gmail.com",
+                     *  "latitudeOflocation": 24.9054491, 
+                     * "locationData": {"coordinates": [Array], "type": "Point"},
+                     *  "longitudeOflocation": 91.8534242, 
+                     * "tokenExpo": "ExponentPushToken[QqByNDEQAwMLn5n3oI-VOS]"}
+                     * ]
+                     * 
+                     */
+
+                    // reset();
+
+
+
                 }
             })
 
+        // if (flag == 1) {
+
+
+        // }
     };
 
 
@@ -397,5 +493,6 @@ const AddEmergencyRequest = ({ navigation }) => {
         </View>
     )
 }
+
 
 export default AddEmergencyRequest

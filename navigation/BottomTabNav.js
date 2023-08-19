@@ -11,6 +11,7 @@ import Homescreen from '../components/Homescreen';
 import AllDonors from '../screens/all-donors/AllDonors';
 import DonationRequest from '../screens/donation-request/DonationRequest';
 import Profile from '../screens/profile/Profile';
+import TopTabNavOfEmergencyRequest from './TopTabNavOfEmergencyRequest';
 
 const Tab = createBottomTabNavigator();
 
@@ -75,8 +76,8 @@ const BottomTabNav = () => {
             />
 
             <Tab.Screen
-                name="DonationRequest"
-                component={DonationRequest}
+                name="emergency-request"
+                component={TopTabNavOfEmergencyRequest}
                 options={{
                     tabBarIcon: ({ focused }) => {
                         return (

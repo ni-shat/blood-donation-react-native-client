@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet, Pressable } from 'react-native'
+import { View, Text, Image, StyleSheet, Pressable, TouchableOpacity, Alert, ActivityIndicator } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../../providers/AuthProvider'
 import tw from 'twrnc';
@@ -14,9 +14,10 @@ const Profile = () => {
 
     const { user, loading, logOut } = useContext(AuthContext);
     const [loggedUser, setLoggedUser] = useState([]);
+    const [loggedUserBloodType, setLoggedUserBloodType] = useState([]);
     const navigation = useNavigation();
     const isFocused = useIsFocused();
-
+    const [isAvailable, setIsAvailable] = useState(false);
 
 
     useEffect(() => {
@@ -26,7 +27,11 @@ const Profile = () => {
         //  192.168.0.103
         fetch(`http://192.168.0.103:5000/users/${email}`)
             .then(res => res.json())
-            .then(data => setLoggedUser(data))
+            .then(data => {
+                setLoggedUser(data);
+                setLoggedUserBloodType(data.bloodType);
+                setIsAvailable(data.available); // db er available rakhsi ei state e
+            })
             .catch(err => console.log(user?.email, err))
     }, [user?.email])
 
@@ -49,11 +54,73 @@ const Profile = () => {
     }
     console.log("loggedUser", loggedUser)
 
+    /**Are you sure you want to mark yourself as unavailable for blood donation? By doing so, your availability will be hidden from those in need of blood. This could be helpful if you're not currently able to donate. Remember that you can always update your availability later. Proceed with marking yourself as unavailable?"
+ */
+
+    const handleConfirm = (msg, available) => {
+
+        Alert.alert(
+            'Confirm Availability',
+            msg,
+            [
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Confirm',
+                    onPress: () => {
+                        //if available true, make not available
+                        if (available) {
+                            saveAvailability = {
+                                available: false
+                            }
+                        }
+                        else {
+                            saveAvailability = {
+                                available: true
+                            }
+                        }
+
+                        fetch(`http://192.168.0.103:5000/users/donors/edit-availability/${loggedUser?.email}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'content-type': 'application/json'
+                            },
+                            body: JSON.stringify(saveAvailability)
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.modifiedCount > 0) {
+                                    setIsAvailable(!available);
+                                }
+                            })
+
+                    },
+                },
+            ],
+            { cancelable: false }
+        );
+    }
+
+    const handleEditAvailability = (available) => {
+        let msg = "";
+
+        if (available) {
+            msg = "Mark yourself as unavailable for blood donation? This could be helpful if you're not currently able to donate. You can update your availability later.\n\nProceed with marking yourself as unavailable?"
+        }
+        else {
+            msg = "Mark yourself as available for blood donation?\nYou'll be listed as a potential donor for those in need."
+        }
+
+        handleConfirm(msg, available);
+    }
+
 
 
     if (loading) {
         console.log(loading)
-        return <Text>Loading...</Text>
+        return <ActivityIndicator />
     }
     else if (!user) {
         return navigation.push('login')
@@ -102,14 +169,28 @@ const Profile = () => {
                 {
                     loggedUser?.role?.toLowerCase() === 'donor' ?
                         <View style={tw`flex flex-col -mt-[110px] py-2 px-7 mb-10 gap-2 w-full items-end justify-end `}>
-                            <View style={tw`border shadow-2xl shadow-black  border-gray-200 w-36 h-10 flex justify-center items-center rounded-xl px-2 bg-white `}>
-                                <Text style={tw`text-[15px] text-center font-medium leading-7 capitalize text-gray-800`}>
-                                    10 request
-                                </Text>
+                            <View style={tw`border flex-row gap-2 shadow-2xl shadow-black  border-gray-200 w-36 h-10 flex justify-center items-center rounded-xl px-2 bg-white `}>
+                                {
+                                    isAvailable ?
+                                        <>
+                                            <Text style={tw`text-[15px] text-center font-medium leading-7 capitalize text-gray-800`}>
+                                                Available
+                                            </Text>
+                                            <View style={tw`w-2.5 mt-0.5 h-2.5 rounded-full bg-green-600`}></View>
+                                        </> :
+                                        <>
+                                            <Text style={tw`text-[15px] text-center font-medium leading-7 capitalize text-gray-800`}>
+                                                Unvailable
+                                            </Text>
+                                        </>
+                                }
+                                <TouchableOpacity onPress={() => handleEditAvailability(isAvailable)} style={tw` rounded-md`}>
+                                    <Image style={tw`w-5 h-5 `} source={require('../../assets/edit.png')} />
+                                </TouchableOpacity>
                             </View>
                             <View style={tw`border shadow-2xl shadow-black  border-gray-200 w-36 h-10 flex justify-center items-center rounded-xl px-2 bg-red-400 `}>
-                                <Text style={tw`text-[15px] text-center font-semibold leading-7 capitalize text-white`}>
-                                    20 Life Saved
+                                <Text style={tw`text-[15px] text-center font-semibold leading-7 text-white`}>
+                                    {loggedUser.bloodType}
                                 </Text>
                             </View>
                         </View>
@@ -128,7 +209,7 @@ const Profile = () => {
             {/* main div */}
             {
                 loggedUser?.role?.toLowerCase() === 'donor' &&
-                <DonorProfile></DonorProfile>
+                <DonorProfile loggedUserBloodType={loggedUserBloodType} email={loggedUser.email}></DonorProfile>
             }
             {
                 loggedUser?.role?.toLowerCase() == 'patient' &&

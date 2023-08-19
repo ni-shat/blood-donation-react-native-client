@@ -53,7 +53,7 @@ const AllEmergencyRequests = () => {
 
 
   return (
-    <SafeAreaView style={tw`flex-1 px-0 pt-0 bg-white w-full`}>
+    <SafeAreaView style={tw`flex-1 px-0 pt-0 pb-16 bg-white w-full`}>
 
             <Pressable style={tw`flex w-full items-start mx-4 mt-3 mb-5`}>
               <Pressable style={tw`flex flex-row items-center bg-white justify-between gap-3 border rounded-xl px-4 w-52 mr-2 py-1.5`}>

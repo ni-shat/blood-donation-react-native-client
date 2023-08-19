@@ -1,4 +1,4 @@
-import { View, Text, Image, Touchable, Pressable, TouchableOpacity, FlatList, TextInput, SafeAreaView } from 'react-native'
+import { View, Text, Image, Touchable, Pressable, TouchableOpacity, FlatList, TextInput, SafeAreaView, ActivityIndicator } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import tw from 'twrnc';
 import {
@@ -7,19 +7,29 @@ import {
 import { AuthContext } from '../../providers/AuthProvider';
 import { Linking } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useQuery } from '@tanstack/react-query';
 
 const AllDonors = ({ navigation }) => {
 
-  const [donors, setDonors] = useState([]);
+  // const [donors, setDonors] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const { user } = useContext(AuthContext);
 
-  useEffect(() => {
-    fetch('http://192.168.0.103:5000/alldonors')
-      .then(response => response.json())
-      .then(data => setDonors(data))
-      .catch(error => console.error('Error fetching data:', error));
-  }, [])
+  const { data: alldonors = [], isLoading: loading, refetch } = useQuery({
+    queryKey: ['alldonors'],
+    queryFn: async () => {
+      const res = await fetch('http://192.168.0.103:5000/alldonors');
+      return res.json();
+    }
+  }) 
+  console.log("todosQuery", alldonors)
+
+  // useEffect(() => {
+  //   fetch('http://192.168.0.103:5000/alldonors')
+  //     .then(response => response.json())
+  //     .then(data => setDonors(data))
+  //     .catch(error => console.error('Error fetching data:', error));
+  // }, [])
 
   const handleRequest = () => {
     if (!user) {
@@ -36,7 +46,7 @@ const AllDonors = ({ navigation }) => {
       .catch(error => console.error('Error opening phone app:', error));
   };
 
-  const filteredDonors = donors.filter(donor =>
+  const filteredDonors = alldonors.filter(donor =>
     donor.bloodType.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -61,6 +71,11 @@ const AllDonors = ({ navigation }) => {
     // <Text style={tw`font-bold text-xl px-3.5 uppercase`}>Find Blood Donors</Text>
 
     <SafeAreaView style={tw`flex-1 px-0 pt-16 pb-16 bg-white w-full`}>
+
+      {/* {
+        todosQuery.isLoading && <ActivityIndicator />
+      } */}
+
       <Pressable style={tw`flex w-full items-end mb-5`}>
         <Pressable style={tw`flex flex-row items-center bg-white justify-between gap-3 border rounded-xl px-4 w-52 mr-2 py-1.5`}>
           <TextInput
